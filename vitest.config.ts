@@ -14,7 +14,11 @@ export default defineConfig({
       {
         test: {
           name: "corpus",
-          include: ["eval/tests/corpus-integrity.test.ts"],
+          include: [
+            "eval/tests/corpus-integrity.test.ts",
+            "eval/tests/harness-selftest.test.ts",
+          ],
+          testTimeout: 120_000,
         },
       },
       {

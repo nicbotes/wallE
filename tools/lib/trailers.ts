@@ -84,7 +84,7 @@ export function readFindingCommits(
       if (field === "refs") {
         c.refs = value.split(",").map((s) => s.trim()).filter(Boolean);
       } else {
-        (c as Record<string, unknown>)[field] = value;
+        (c as unknown as Record<string, unknown>)[field] = value;
       }
     }
     commits.push(c);

@@ -22,6 +22,7 @@ import type {
   Requirement,
   ScopeItem,
   Stakeholder,
+  Tension,
 } from "./types.js";
 
 const HEADING_RE = /^## (.+?)\s*\(([a-z0-9-]+)\)\s*$/;
