@@ -241,9 +241,9 @@ const isMain = process.argv[1] && path.resolve(process.argv[1]).endsWith("valida
 if (isMain) {
   const args = process.argv.slice(2);
   const dirFlag = args.indexOf("--clients-dir");
-  const clientsDir =
-    dirFlag !== -1 ? path.resolve(args[dirFlag + 1] ?? "clients") : path.resolve("clients");
-  const slug = args.find((a) => !a.startsWith("--") && a !== args[dirFlag + 1]);
+  const dirValue = dirFlag !== -1 ? args[dirFlag + 1] : undefined;
+  const clientsDir = path.resolve(dirValue ?? "clients");
+  const slug = args.find((a, i) => !a.startsWith("--") && (dirFlag === -1 || i !== dirFlag + 1));
   if (!slug) {
     console.error("usage: npx tsx tools/validate.ts <client-slug> [--clients-dir <dir>]");
     process.exit(2);
