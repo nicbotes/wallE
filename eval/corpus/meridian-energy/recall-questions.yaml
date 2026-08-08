@@ -1,0 +1,44 @@
+# Recall/onboard eval: questions asked against the after-16 brain state.
+# Graded deterministically by required-ID presence in the answer (the recall
+# skill is instructed to cite entity IDs), plus one binary judge rubric each.
+questions:
+  - q: "Who should I be careful around when proposing scope changes to the replatform, and why?"
+    must_mention: [sh-marcus-webb]
+    rubric: >-
+      The answer identifies Marcus Webb as cost-driven (his stated incentive)
+      and cites his history of cutting scope (October 2024 cuts).
+
+  - q: "Prep me for a meeting with Dana Okafor."
+    must_mention: [sh-dana-okafor]
+    rubric: >-
+      The answer covers her disposition trajectory (neutral → sceptical after
+      the June 2024 outage), her delivered dual-run requirement, and the
+      resolved cutover tension with Marcus.
+
+  - q: "What's the story of the database decision?"
+    must_mention: []
+    rubric: >-
+      The answer tells the full supersession story: self-hosted Postgres
+      decided by Priya in Feb 2024, reversed to managed cloud in July 2024
+      jointly by Marcus and Priya after the outage changed the economics.
+
+  - q: "What tensions are still open right now?"
+    must_mention: [sh-aisha-bell, sh-tom-nagel]
+    rubric: >-
+      The answer names exactly one open tension — the shared platform-team
+      capacity conflict between Aisha and Tom — and does not present resolved
+      tensions (cutover, budget-vs-speed) as open.
+
+  - q: "Who is Priya Sharma and does she still matter?"
+    must_mention: [sh-priya-sharma]
+    rubric: >-
+      The answer says she departed (Sept 2024), was the original champion,
+      and notes her decisions/requirements still shape the programme (e.g.
+      the reversed database decision; the dropped API-first requirement).
+
+  - q: "What is the state of the customer portal project?"
+    must_mention: [proj-customer-portal]
+    rubric: >-
+      The answer covers: active project, pilot re-opened after the July 2025
+      auth incident, SSO decision by Tom, Aisha's must-have billing view
+      requirement, and payment-history export explicitly undecided.
