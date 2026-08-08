@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git tag:*)",
+      "Bash(bash tools/commit-finding.sh:*)",
+      "Bash(tools/commit-finding.sh:*)",
+      "Bash(npx tsx tools/*)",
+      "Bash(rg:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)"
+    ],
+    "deny": [
+      "WebFetch",
+      "WebSearch"
+    ]
+  }
+}
