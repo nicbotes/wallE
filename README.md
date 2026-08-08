@@ -33,6 +33,9 @@ Or just:
 ./setup.sh          # installs the above (brew | apt/dnf) + npm install
 ```
 
+**Setting this up for the first time?** Follow [`INIT.md`](INIT.md) — it walks
+from a fresh clone through verification to the first committed eval baseline.
+
 ## Use it (inside Claude Code)
 
 Open this repo in Claude Code. The skills load automatically:
