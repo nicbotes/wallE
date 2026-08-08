@@ -14,7 +14,9 @@ import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync } from "node:fs";
 import path from "node:path";
 
-const CAPABILITY = ["CLAUDE.md", ".claude", "schema", "tools", "package.json", "tsconfig.json"];
+const CAPABILITY = [
+  "CLAUDE.md", ".claude", "schema", "tools", "domains", "package.json", "tsconfig.json",
+];
 
 export function skillhash(repoDir: string): string {
   const h = createHash("sha256");

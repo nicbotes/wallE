@@ -18,6 +18,31 @@ cite it. If this document and a skill disagree, this document wins.
 5. **`last_confirmed` drives staleness.** Re-confirmation of an existing fact
    by a new drop bumps the date.
 
+## Topics: a thin controlled spine over free-form tagging
+
+Entities that have a *subject* — observations, decisions, requirements,
+tensions, scope items — carry `topics: []`. A topic takes one of two forms, and
+the difference is enforced:
+
+| Form | Example | Rule |
+| --- | --- | --- |
+| `facet:term` | `component:coverage` | **Controlled.** Must resolve against a domain pack attached to this brain, or the validator errors. |
+| bare slug | `renewal-pricing-quirk` | **Free-form.** Always valid. These are promotion candidates. |
+
+Which packs apply is declared in `client.md` as `domains: [insurance]`. The
+packs themselves live in `domains/` and are **capability, not client content** —
+the vocabulary a consultant learns before meeting anyone. See
+`domains/README.md` for the format and the promotion path; `tools/spine.ts` is
+the CLI (`list`, `resolve`, `candidates`).
+
+The point of the split: controlled topics give cross-client comparability
+("every client who hit this in migration"), free-form topics stop the scheme
+from rotting the moment reality outruns it, and `spine.ts candidates` turns
+recurring free-form topics into evidence for extending a pack.
+
+**Never force a topic that isn't obvious.** An absent tag costs a little
+recall; a wrong one makes a search look complete when it isn't, which is worse.
+
 ## Two clocks: event time vs knowledge time
 
 Understanding arrives out of order. Someone explains in today's meeting why IT
@@ -295,6 +320,7 @@ id: acme-utilities
 name: Acme Utilities
 schema_version: 1
 first_contact: 2024-01-08
+domains: [insurance]            # ? packs in domains/ whose spines apply here
 ```
 
 Prose: what the org is, the engagement map, and a **Reading order** section

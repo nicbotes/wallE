@@ -10,6 +10,7 @@ status: active
 priority: must
 source: drop-2024-01-05-kickoff
 last_confirmed: 2024-03-01
+topics: [concern:compliance, component:document, audit-evidence-format]
 ```
 
 Bo needs evidence for the auditors.

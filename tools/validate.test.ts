@@ -98,6 +98,15 @@ describe("validateBrain on the poisoned fixture", () => {
 
   it("treats unattributed requirements as warnings, not errors", () => {
     expect(result.warnings.some((w) => w.includes("req-unowned-wish"))).toBe(true);
-    expect(result.errors.some((e) => e.includes("req-unowned-wish"))).toBe(false);
+    // The entity has other (topic) errors; what must never be an error is the
+    // missing attribution itself.
+    expect(result.errors.some((e) => e.includes("unattributed"))).toBe(false);
+  });
+
+  it("catches an unknown domain pack and an unresolvable controlled topic", () => {
+    expectError('domains references unknown pack "underwater-basketry"');
+    expectError('topic "component:teleportation" does not resolve');
+    // …but a bare free-form topic alongside it is fine.
+    expect(all).not.toContain("fine-free-form-topic");
   });
 });

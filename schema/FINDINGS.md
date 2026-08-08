@@ -17,6 +17,7 @@ understanding; these commits are its records.
 | `incentive-update` | Kind/confidence change (e.g. inferred → confirmed stated) |
 | `observation-new` | Durable "good to know" context recorded |
 | `observation-update` | Observation revised, re-scoped or confidence changed |
+| `domain-attach` | Domain pack(s) attached to a brain (`Entity` = client slug) |
 | `requirement-new` | New requirement |
 | `requirement-update` | Status/priority/attribution change |
 | `decision-new` | Decision with no predecessor |

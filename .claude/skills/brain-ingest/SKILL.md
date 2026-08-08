@@ -120,6 +120,16 @@ While drafting:
   explicitly *not* decided are not findings and not observations. When in doubt
   whether something is a finding, it probably isn't — but say so in your
   narration (step 8) so the judgment is visible.
+- **Tag subjects with topics.** Observations, decisions, requirements,
+  tensions and scope items carry `topics: []`. Check what the brain's attached
+  spine offers — `npx tsx tools/spine.ts resolve <domain> "<the relevant
+  sentence>"` proposes `facet:term` candidates from the actual wording. Use a
+  controlled term when it clearly fits; use a bare slug
+  (`renewal-pricing-quirk`) for anything the spine doesn't cover; leave
+  `topics` off entirely when nothing is obvious. **Never force a tag** — a
+  missing topic costs a little recall, a wrong one makes a later search look
+  complete when it isn't. Recurring bare slugs are how the spine grows
+  (`brain-domain`), so inventing a sensible one is useful, not a failure.
 - **Restraint about people.** Never record personal or sensitive detail
   (health, family, private circumstances) that happens to be caught on a
   transcript, and never record disparaging characterisations as facts. If

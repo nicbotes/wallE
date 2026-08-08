@@ -9,6 +9,8 @@ export const FINDING_TYPES = [
   "stakeholder-update",
   "incentive-new",
   "incentive-update",
+  "observation-new",
+  "observation-update",
   "requirement-new",
   "requirement-update",
   "decision-new",
@@ -21,6 +23,7 @@ export const FINDING_TYPES = [
   "log-entry",
   "confirm",
   "correction",
+  "domain-attach",
 ] as const;
 
 export type FindingType = (typeof FINDING_TYPES)[number];

@@ -27,6 +27,10 @@ is to serve it up with provenance.
   how their budget cycle works, who has history with whom, what a given person
   expects in a room. Fold the relevant ones into any answer where they'd change
   how the person acts; they are often the most immediately useful thing there.
+- **Use topics to scope a subject question.** "Where are we on rating?" is a
+  topic query — `npx tsx tools/search.ts` over the brain, or filter entities by
+  `topics`. Remember tagging is best-effort: an untagged entity may still be
+  relevant, so treat topics as a fast path, never as the complete set.
 - **Answer in event time.** Chronology comes from entity dates
   (`npx tsx tools/timeline.ts <slug>`), not from commit order. Backstory we
   learned late is ordinary context — a 2022 decision recounted to us last month

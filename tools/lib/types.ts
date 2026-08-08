@@ -49,6 +49,8 @@ export interface Observation {
   confidence: Confidence;
   source: string;
   last_confirmed: string;
+  /** Subject tags: `facet:term` (controlled) or a bare slug (free-form). */
+  topics?: string[];
 }
 
 export interface Decision {
@@ -59,6 +61,8 @@ export interface Decision {
   supersedes?: string | null;
   superseded_by?: string | null;
   source: string;
+  /** Subject tags: `facet:term` (controlled) or a bare slug (free-form). */
+  topics?: string[];
 }
 
 export interface Requirement {
@@ -69,6 +73,8 @@ export interface Requirement {
   priority: "must" | "should" | "could" | "unknown";
   source: string;
   last_confirmed: string;
+  /** Subject tags: `facet:term` (controlled) or a bare slug (free-form). */
+  topics?: string[];
 }
 
 export interface Tension {
@@ -79,6 +85,8 @@ export interface Tension {
   source: string;
   resolved?: string | null;
   resolved_by?: string | null;
+  /** Subject tags: `facet:term` (controlled) or a bare slug (free-form). */
+  topics?: string[];
 }
 
 export interface ScopeItem {
@@ -89,6 +97,8 @@ export interface ScopeItem {
   source: string;
   /** Which section heading (## In / ## Out / ## Undecided) the item sits under. */
   section: "in" | "out" | "undecided";
+  /** Subject tags: `facet:term` (controlled) or a bare slug (free-form). */
+  topics?: string[];
 }
 
 export interface LogEntry {
@@ -112,6 +122,8 @@ export interface ClientProfile {
   name: string;
   schema_version: number;
   first_contact?: string | null;
+  /** Domain packs whose spines apply to this brain (see domains/README.md). */
+  domains?: string[];
 }
 
 export interface Drop {

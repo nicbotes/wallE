@@ -1,0 +1,24 @@
+# Copy this directory to domains/<your-domain>/ to start a new pack.
+#
+# Guidance that matters more than the format:
+#   - 3–5 facets, not more. A spine you can hold in your head gets used.
+#   - Facets must be ORTHOGONAL. If two facets are usually assigned together,
+#     they're one facet. If a term forces an either/or that isn't real, split it.
+#   - Terms coarse, not exhaustive. Free-form topics catch the long tail, and
+#     tools/spine.ts candidates tells you what to promote.
+#   - Be generous with `alt:` — that's how "cover"/"coverage"/"benefit" all
+#     resolve to one term. Adding alts later is safe.
+#   - Term ids are permanent. Renaming one orphans every topic using it.
+domain: DOMAIN_SLUG
+label: Human Readable Name
+version: 1
+extends: _base          # drop this line if the engagement facet doesn't apply
+
+facets:
+  - id: FACET_ID
+    label: Facet label
+    description: What question this facet answers about a discussion.
+    terms:
+      - id: TERM_ID
+        label: Term label
+        alt: [synonym, another way people say it]

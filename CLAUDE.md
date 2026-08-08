@@ -11,8 +11,10 @@ capabilities.
   (every raw input, verbatim); everything else is a curated projection of it.
 - `schema/SCHEMA.md` — the normative spec for brain files, entities, and IDs.
 - `schema/FINDINGS.md` — the finding taxonomy and commit protocol.
+- `domains/` — domain packs: the thin controlled vocabulary ("spine") topics
+  are tagged against. Capability, never client content. See `domains/README.md`.
 - `tools/` — deterministic helpers (validate, query-log, timeline, staleness,
-  search, speakers, stats, commit-finding.sh). Run TypeScript tools with
+  search, speakers, stats, spine, commit-finding.sh). Run TypeScript tools with
   `npx tsx tools/<name>.ts`.
 - `eval/` — synthetic corpus + goldens + harness that grade the extraction
   skills. **Never read `eval/` when doing real client work** — it is quality
@@ -45,6 +47,7 @@ capabilities.
 | "What changed since…" | `brain-diff` |
 | Hygiene check (stale facts, broken refs, unlogged contradictions) | `brain-audit` |
 | "Read me into this client" | `brain-onboard` |
+| New industry, or topics not resolving | `brain-domain` |
 
 ## Development
 

@@ -24,6 +24,7 @@ decided_by: [sh-ada-vance, sh-bo-reyes]
 supersedes: dec-20240105-big-bang
 superseded_by: null
 source: drop-2024-03-01-review
+topics: [concern:delivery, stage:product-design]
 ```
 
 Reversal after Bo's cost gates won the argument.

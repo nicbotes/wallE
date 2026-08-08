@@ -186,7 +186,7 @@ describe("leakage lint", () => {
       "billing-replatform", "customer-portal", "dual-run", "selfhost",
       "managed-cloud", "mobile-payments", "postgres",
     ];
-    const targets = [".claude", "schema", "tools"].map((d) => path.join(REPO, d));
+    const targets = [".claude", "schema", "tools", "domains"].map((d) => path.join(REPO, d));
     for (const target of targets) {
       for (const word of STOPLIST) {
         let out = "";

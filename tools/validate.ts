@@ -10,6 +10,7 @@
 import path from "node:path";
 import { existsSync } from "node:fs";
 import { parseBrain } from "./lib/parser.js";
+import { classifyTopic, listDomains, loadSpine, type Spine } from "./lib/spine.js";
 import type { Brain } from "./lib/types.js";
 
 const DISPOSITIONS = ["champion", "supportive", "neutral", "skeptical", "blocker", "unknown"];
@@ -32,9 +33,44 @@ export interface ValidationResult {
   warnings: string[];
 }
 
-export function validateBrain(brain: Brain): ValidationResult {
+export function validateBrain(brain: Brain, repoDir = process.cwd()): ValidationResult {
   const errors: string[] = [...brain.parseErrors];
   const warnings: string[] = [];
+
+  // --- domain packs + the controlled half of the topic vocabulary ------------
+  const declared = brain.profile?.domains ?? [];
+  const available = listDomains(repoDir);
+  const spines: Spine[] = [];
+  for (const d of declared) {
+    if (!available.includes(d)) {
+      errors.push(`client.md: domains references unknown pack "${d}" (available: ${available.join(", ") || "none"})`);
+      continue;
+    }
+    try {
+      spines.push(loadSpine(d, repoDir));
+    } catch (e) {
+      errors.push(`client.md: domain "${d}" failed to load: ${(e as Error).message}`);
+    }
+  }
+
+  /** Free-form topics always pass; `facet:term` must resolve in an attached spine. */
+  const checkTopics = (topics: unknown, where: string) => {
+    if (topics === undefined) return;
+    if (!Array.isArray(topics)) {
+      errors.push(`${where}: topics must be a list`);
+      return;
+    }
+    for (const raw of topics) {
+      const t = classifyTopic(String(raw), spines);
+      if (t.form === "controlled" && !t.resolved) {
+        errors.push(
+          declared.length
+            ? `${where}: topic "${t.raw}" does not resolve in the attached spine(s) [${declared.join(", ")}]`
+            : `${where}: topic "${t.raw}" is facet:term form but this brain has no domains attached`,
+        );
+      }
+    }
+  };
 
   const shIds = new Set(brain.stakeholders.map((s) => s.id));
   const dropIds = new Set(brain.drops.map((d) => d.id));
@@ -183,6 +219,7 @@ export function validateBrain(brain: Brain): ValidationResult {
     oneOf(o.confidence, CONFIDENCES, where, "confidence");
     refDrop(o.source, where, "source");
     date(o.last_confirmed, where, "last_confirmed");
+    checkTopics(o.topics, where);
   }
 
   // --- decisions (org + project) ----------------------------------------------
@@ -195,6 +232,7 @@ export function validateBrain(brain: Brain): ValidationResult {
     else for (const sh of d.decided_by) refSh(sh, where, "decided_by");
     refDrop(d.source, where, "source");
     notAfterSource(d.date, d.source, where, "date");
+    checkTopics(d.topics, where);
     // supersession chain integrity
     if (d.supersedes) {
       if (!decIds.has(d.supersedes))
@@ -233,6 +271,7 @@ export function validateBrain(brain: Brain): ValidationResult {
     date(t.opened, where, "opened");
     refDrop(t.source, where, "source");
     notAfterSource(t.opened, t.source, where, "opened");
+    checkTopics(t.topics, where);
     if (t.status === "resolved") {
       date(t.resolved, where, "resolved");
       if (t.resolved_by && !decIds.has(t.resolved_by))
@@ -265,6 +304,7 @@ export function validateBrain(brain: Brain): ValidationResult {
       for (const sh of s.decided_by ?? []) refSh(sh, where, "decided_by");
       refDrop(s.source, where, "source");
       notAfterSource(s.since, s.source, where, "since");
+      checkTopics(s.topics, where);
     }
 
     for (const r of p.requirements) {
@@ -280,6 +320,7 @@ export function validateBrain(brain: Brain): ValidationResult {
       refDrop(r.source, where, "source");
       notAfterSource(r.date, r.source, where, "date");
       date(r.last_confirmed, where, "last_confirmed");
+      checkTopics(r.topics, where);
     }
 
     for (const l of p.log) {

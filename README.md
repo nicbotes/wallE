@@ -27,6 +27,12 @@ with the person. This repo captures it instead:
   learned it). Backfilled backstory is first-class current context, not a
   git-history footnote — `tools/timeline.ts` reads the story in event order,
   `tools/query-log.ts` in the order we learned it.
+- **Topics** — findings are tagged against a thin controlled spine
+  (`facet:term`, e.g. `component:coverage`) with free-form slugs for whatever it
+  doesn't cover yet. `tools/spine.ts candidates` surfaces recurring free-form
+  topics so the vocabulary grows from real usage instead of being designed up
+  front. Domain packs live in `domains/` and are swappable — insurance ships as
+  the first one.
 - **Quality** — a synthetic corpus with golden facts and an eval harness keep
   the extraction skills honest and catch regressions when prompts change.
 
@@ -118,7 +124,8 @@ CLAUDE.md            operating instructions for the agent
 docs/PLAN.md         the full build plan & design rationale
 schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) · templates/
 .claude/skills/      brain-init · brain-ingest · brain-recall · brain-diff · brain-audit · brain-onboard
-tools/               validate · query-log · timeline · staleness · search · speakers · stats · commit-finding.sh
+domains/             domain packs — the thin controlled vocabulary for topics
+tools/               validate · query-log · timeline · staleness · search · speakers · stats · spine · commit-finding.sh
 clients/             one brain per client (ships empty)
 eval/                corpus · goldens · harness · committed score reports
 ```

@@ -26,13 +26,21 @@ Read `schema/SCHEMA.md` before writing anything. Never invent facts.
    mark unknowns as unknown. Do not touch the other template files; they start
    empty by design.
 
-4. **Commit** through the gate (one commit for the whole init):
+4. **Attach a domain spine** — the vocabulary a consultant learns before
+   meeting anyone. `npx tsx tools/spine.ts validate` lists installed packs;
+   set `domains: [<pack>]` in `client.md` for whichever matches this client's
+   industry. If none fits, use `domains: [_base]` (engagement concerns only)
+   and mention that a pack for their industry can be built later with
+   `brain-domain`. Don't invent a pack mid-init — attaching is one line;
+   authoring vocabulary deserves its own pass.
+
+5. **Commit** through the gate (one commit for the whole init):
    ```
    tools/commit-finding.sh -c <slug> -t brain-init -e <slug> -s manual \
        -m "initialise client brain" clients/<slug>
    ```
 
-5. **Tell the user** the brain exists with capability but no context yet, and
+6. **Tell the user** the brain exists with capability but no context yet, and
    that understanding grows drop by drop — invite the first context drop
    (a transcript, notes, an email, or just talking through a meeting).
 

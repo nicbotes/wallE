@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, writeFileSync, chmodSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -196,9 +196,20 @@ describe("commit-finding.sh gate", () => {
     expect(readFindingCommits(repo)[0]!.backfill).toBeUndefined();
   });
 
-  it("covers every documented finding type", () => {
-    // Guard against taxonomy drift between FINDINGS.md, trailers.ts and the gate.
-    const gateSource = execFileSync("cat", [GATE], { encoding: "utf8" });
-    for (const t of FINDING_TYPES) expect(gateSource).toContain(t);
+  it("taxonomy matches FINDINGS.md exactly — spec, lib and gate cannot drift", () => {
+    // FINDINGS.md is the source of truth. Parse its table and require the code
+    // to agree in BOTH directions; a one-way check previously let two types be
+    // documented but rejected by the gate.
+    const spec = readFileSync(path.join(REPO_ROOT, "schema", "FINDINGS.md"), "utf8");
+    const table = spec.slice(spec.indexOf("## Finding types"), spec.indexOf("## Commit message format"));
+    const documented = [...table.matchAll(/^\|\s*`([a-z-]+)`(?:\s*\/\s*`([a-z-]+)`)?\s*\|/gm)]
+      .flatMap((m) => [m[1], m[2]])
+      .filter((t): t is string => !!t);
+
+    expect(documented.length).toBeGreaterThan(15);
+    expect([...FINDING_TYPES].sort()).toEqual([...new Set(documented)].sort());
+
+    const gateTypes = (readFileSync(GATE, "utf8").match(/^TYPES="(.+)"$/m)?.[1] ?? "").split(" ");
+    expect(gateTypes.sort()).toEqual([...FINDING_TYPES].sort());
   });
 });

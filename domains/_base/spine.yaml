@@ -1,0 +1,49 @@
+# Base spine — engagement concerns any consulting work has, whatever the
+# industry. Most domain packs should `extends: _base` and add their own
+# domain facets on top.
+domain: _base
+label: Engagement (industry-agnostic)
+version: 1
+
+facets:
+  - id: concern
+    label: Engagement concern
+    description: >-
+      What kind of problem the discussion is about, independent of industry.
+      Usually the easiest facet to assign confidently.
+    terms:
+      - id: requirement
+        label: Requirement
+        alt: [need, must-have, ask, spec]
+      - id: architecture
+        label: Architecture
+        alt: [design, technical design, solution design]
+      - id: integration
+        label: Integration
+        alt: [interface, api, connector, middleware]
+      - id: migration
+        label: Data migration
+        alt: [cutover, data load, conversion, backfill]
+      - id: compliance
+        label: Compliance & regulatory
+        alt: [regulatory, audit, governance, legal]
+      - id: security
+        label: Security & access
+        alt: [infosec, access control, authentication, data protection]
+      - id: commercial
+        label: Commercial
+        alt: [cost, budget, pricing, contract, licence, spend]
+      - id: delivery
+        label: Delivery & timeline
+        # NB: "schedule" deliberately omitted — in insurance it means a policy
+        # schedule (a document), and the collision produced false positives.
+        alt: [timeline, plan, milestone, resourcing, capacity]
+      - id: operations
+        label: Operations & support
+        alt: [run, bau, support, incident, sla, monitoring]
+      - id: adoption
+        label: Adoption & change
+        alt: [training, enablement, rollout, change management]
+      - id: reporting
+        label: Reporting & analytics
+        alt: [mi, bi, dashboards, data warehouse, extracts]

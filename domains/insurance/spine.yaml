@@ -1,0 +1,117 @@
+# Insurance spine — a STARTING POINT, not gospel.
+#
+# Terms are drawn from the vocabulary insurers actually use (broadly aligned
+# with ACORD's product concepts, deliberately far lighter than ACORD itself —
+# this is a thesaurus for tagging discussions, not a message-interchange model).
+#
+# Expect to edit this as you learn what YOUR clients say. Adding an `alt:`
+# label is cheap and safe; renaming a term id orphans every topic that used it.
+domain: insurance
+label: Insurance
+version: 1
+extends: _base
+
+facets:
+  - id: line
+    label: Line of business
+    description: Which book of business the discussion concerns.
+    terms:
+      - id: motor
+        label: Motor
+        alt: [auto, vehicle, car, fleet]
+      - id: property
+        label: Property
+        alt: [home, household, buildings, contents]
+      - id: liability
+        label: Liability
+        alt: [casualty, public liability, professional indemnity]
+      - id: life
+        label: Life
+        alt: [life assurance, protection, funeral]
+      - id: health
+        label: Health
+        alt: [medical, medical aid, gap cover]
+      - id: travel
+        label: Travel
+      - id: commercial-lines
+        label: Commercial lines
+        alt: [sme, business insurance, commercial]
+      - id: specialty
+        label: Specialty
+        alt: [niche, affinity, embedded]
+      - id: reinsurance
+        label: Reinsurance
+        alt: [treaty, facultative, cession]
+
+  - id: component
+    label: Product component
+    description: >-
+      The part of the product model under discussion. This is the facet that
+      matters most for product-modelling work — be generous with alt labels,
+      because clients use these words loosely and interchangeably.
+    terms:
+      - id: product
+        label: Product definition
+        alt: [product model, product config, product setup]
+      - id: coverage
+        label: Coverage
+        alt: [cover, benefit, benefits, section, insured peril]
+      - id: peril
+        label: Peril
+        alt: [insured event, cause of loss]
+      - id: limit
+        label: Limits & deductibles
+        alt: [sum insured, excess, deductible, sub-limit, cap]
+      - id: exclusion
+        label: Exclusions
+        alt: [carve-out, not covered, waiting period]
+      - id: endorsement
+        label: Endorsement
+        alt: [mta, mid-term adjustment, amendment, rider]
+      - id: rating
+        label: Rating & pricing
+        alt: [rate table, rating factor, premium calculation, algorithm, actuarial]
+      - id: premium
+        label: Premium & billing
+        alt: [collection, debit order, instalment, invoice, payment]
+      - id: commission
+        label: Commission
+        alt: [broker fee, intermediary fee, remuneration]
+      - id: underwriting
+        label: Underwriting rules
+        alt: [uw, eligibility, acceptance criteria, referral, decline]
+      - id: claim
+        label: Claims
+        alt: [fnol, claim handling, settlement, repudiation]
+      - id: policyholder
+        label: Policyholder & parties
+        alt: [customer, member, insured, beneficiary, dependant]
+      - id: document
+        label: Documents & schedules
+        alt: [policy schedule, schedule, wording, certificate, correspondence]
+
+  - id: stage
+    label: Policy lifecycle stage
+    description: Where in the policy lifecycle the discussion sits.
+    terms:
+      - id: product-design
+        label: Product design
+        alt: [product build, configuration]
+      - id: quote
+        label: Quote & bind
+        alt: [quotation, new business, application, onboarding]
+      - id: policy-admin
+        label: Policy administration
+        alt: [servicing, in-force, amendments]
+      - id: renewal
+        label: Renewal
+        alt: [anniversary, re-rate]
+      - id: claims-lifecycle
+        label: Claims handling
+        alt: [claims process, claims journey]
+      - id: cancellation
+        label: Cancellation & lapse
+        alt: [lapse, surrender, non-payment, churn]
+      - id: regulatory-reporting
+        label: Regulatory reporting
+        alt: [statutory reporting, bordereaux, returns]

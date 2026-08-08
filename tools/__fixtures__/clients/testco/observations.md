@@ -9,6 +9,7 @@ kind: process
 confidence: high
 source: drop-2024-01-05-kickoff
 last_confirmed: 2024-03-01
+topics: [concern:commercial, audit-evidence-format]
 ```
 
 Anything needing new spend has to be raised before the March board meeting or it
