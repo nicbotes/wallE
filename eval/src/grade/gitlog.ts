@@ -81,6 +81,13 @@ export function gradeCommits(
     add(`min:${type}`, got >= min, `${got}/${min}`);
   }
 
+  // Backfill marking: late-learned history must be flagged so brain-diff can
+  // tell "something happened" from "we learned something old".
+  if (golden.min_backfill !== undefined) {
+    const got = findings.filter((c) => c.backfill).length;
+    add("min:backfill", got >= golden.min_backfill, `${got}/${golden.min_backfill}`);
+  }
+
   add("validator-clean", validateExitOk, validateExitOk ? "ok" : "validate.ts reported errors");
 
   return {

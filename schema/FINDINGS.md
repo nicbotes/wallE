@@ -50,6 +50,11 @@ Trailer rules:
 - `Project` — required for project-level findings, omitted for org-level.
 - `Refs` — optional, comma-separated related entity IDs (the superseded
   decision, the resolving decision, the corrected commit SHA).
+- `Backfill` — optional, `true` when the finding's **event date predates its
+  source drop by more than ~30 days** (see the two-clocks section of
+  `schema/SCHEMA.md`). It marks "we learned something old", not "something new
+  happened", so `brain-diff` can narrate the two honestly. Backfill uses the
+  ordinary finding types — there is no separate backfill type.
 - `Attributed-To` — optional, the stakeholder who said/decided it.
 - For `drop` commits: `Entity` and `Source` are both the drop id.
 - For `brain-init`: `Entity` is the client slug, `Source` is `manual`.
@@ -63,6 +68,22 @@ git log --format='%H %(trailers:key=Finding,valueonly,separator=%x2C)'
 git log --grep 'Finding: decision-superseded'
 npx tsx tools/query-log.ts --client acme-utilities --type decision-superseded
 ```
+
+## Backfill
+
+Late-arriving history is committed like anything else — same types, same
+ordering, `Source:` still the drop that taught us — plus `Backfill: true`. Three
+cases need care:
+
+- **Retro-supersession.** Learning of an older decision that one we already hold
+  replaced: add the old entry (dated then), stamp the reciprocal
+  `supersedes`/`superseded_by` pair, and commit both edits as ONE
+  `decision-superseded` — exactly as if it had arrived in order.
+- **Retro-attribution.** Learning who was behind a requirement previously
+  recorded `unattributed` is a `requirement-update`, not a `correction` — we
+  were not wrong before, we simply did not know.
+- **`correction` vs backfill.** `correction` is for *our extraction being
+  wrong*. New history that we never had is not a correction.
 
 ## Ingest ordering (per drop)
 

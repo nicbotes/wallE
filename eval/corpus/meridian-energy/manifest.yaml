@@ -21,3 +21,6 @@ drops:
   - { seq: 14, file: drops/14-portal-auth-incident.md,   id: drop-2025-07-02-portal-auth-incident,   date: 2025-07-02, type: incident, title: "Portal pilot auth outage" }
   - { seq: 15, file: drops/15-cutover-workshop-2.md,     id: drop-2025-09-10-cutover-workshop-2,     date: 2025-09-10, type: workshop, title: "Cutover workshop — phased plan" }
   - { seq: 16, file: drops/16-exec-review.md,            id: drop-2025-11-18-exec-review,            date: 2025-11-18, type: meeting,  title: "Executive review" }
+  # Backfill: a current meeting that recounts 2021/2022 history. The drop is
+  # dated when the meeting happened; the entities it yields carry older dates.
+  - { seq: 17, file: drops/17-handover-backstory.md,     id: drop-2026-01-14-handover-backstory,     date: 2026-01-14, type: meeting,  title: "Handover — account history" }

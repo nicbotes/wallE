@@ -1,0 +1,69 @@
+# Cumulative expected state after drop 17 (handover — backfilled history).
+#
+# The backfill test. Nothing NEW happened in this meeting; we learned old
+# things. Every entity below must carry its own EVENT date (2021/2022/2024)
+# while sourcing to the 2026 drop, and the commits must be marked Backfill.
+drop: drop-2026-01-14-handover-backstory
+deterministic:
+  decisions:
+    # A 2022 board decision we never knew existed — event time 2022, learned 2026.
+    - match: { file: decisions.md, date: 2022-02-03, keywords_any: [security, review, data] }
+      expect:
+        status: active
+        decided_by: { includes: [sh-marcus-webb] }
+        source: drop-2026-01-14-handover-backstory
+    # Untouched by this drop.
+    - match: { file: billing-replatform, date: 2024-07-30 }
+      expect: { status: active }
+    - match: { file: billing-replatform, date: 2025-09-10 }
+      expect: { status: active }
+  requirements:
+    # Retro-attribution: previously unattributed, now Dana's. NOT a correction.
+    - match: { file: billing-replatform, keywords_any: [csv] }
+      expect: { stated_by: sh-dana-okafor }
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: delivered }
+  incentives:
+    # Marcus's cost scepticism gains a dated origin (2021 CRM failure).
+    - match: { file: incentives.md, keywords_any: [cost] }
+      expect: { stakeholder: sh-marcus-webb }
+  stakeholders:
+    # Dispositions are unchanged — this drop explains the past, it does not
+    # move anyone's current position.
+    - match: { id: sh-marcus-webb }
+      expect: { status: active, disposition: skeptical }
+    - match: { id: sh-dana-okafor }
+      expect: { status: active }
+    - match: { id: sh-tom-nagel }
+      expect: { status: active, disposition: supportive }
+    - match: { id: sh-priya-sharma }
+      expect: { status: departed }
+  projects:
+    - match: { id: proj-billing-replatform }
+      expect: { status: delivered }
+    - match: { id: proj-customer-portal }
+      expect: { status: active }
+  tensions:
+    - match: { keywords_any: [capacity, shared] }
+      expect: { status: open }
+  drops:
+    - match: { id: drop-2026-01-14-handover-backstory }
+  commit_protocol:
+    source: drop-2026-01-14-handover-backstory
+    min_findings:
+      drop: 1
+      decision-new: 1
+      requirement-update: 1
+    min_backfill: 1     # at least one commit must carry Backfill: true
+judge:
+  - target: { type: decision, file: decisions.md, date: 2022-02-03 }
+    rubric: >-
+      The entry records a board decision made in February 2022 (not 2026) that
+      is still active, and its prose makes clear we only learned of it during
+      the January 2026 handover — it must not read as a new decision taken in
+      2026.
+  - target: { type: stakeholder, id: sh-dana-okafor }
+    rubric: >-
+      Dana's entry now records that her early wait-and-see stance originated in
+      the failed 2021 CRM programme she led operationally, dated to 2021 rather
+      than presented as a change in her current position.

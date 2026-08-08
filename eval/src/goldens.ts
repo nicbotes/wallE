@@ -42,6 +42,8 @@ export interface Assertion {
 export interface CommitProtocolGolden {
   source: string;
   min_findings: Record<string, number>;
+  /** Minimum commits that must carry `Backfill: true` (late-learned history). */
+  min_backfill?: number;
 }
 
 export interface JudgeGolden {

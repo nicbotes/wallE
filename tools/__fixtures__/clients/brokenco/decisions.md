@@ -1,5 +1,19 @@
 # Decisions (org-level)
 
+## Impossible future decision (dec-20250901-time-traveller)
+
+```yaml
+id: dec-20250901-time-traveller
+date: 2025-09-01
+status: active
+decided_by: [sh-cy-doe]
+supersedes: null
+superseded_by: null
+source: drop-2024-03-15-workshop
+```
+
+Dated after the drop that supposedly taught us about it.
+
 ## One-way supersede (dec-20240315-one-way)
 
 ```yaml

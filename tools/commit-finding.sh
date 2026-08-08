@@ -5,14 +5,17 @@
 #
 # Usage:
 #   tools/commit-finding.sh -c <client> -t <finding-type> -e <entity> -s <source-drop> \
-#       [-p <project>] [-a <attributed-to>] [-r <refs,comma,separated>] \
+#       [-p <project>] [-a <attributed-to>] [-r <refs,comma,separated>] [-B] \
 #       -m "<summary>" [-b "<body>"] <file>...
+#
+# -B marks the finding as backfill: its event date predates the source drop
+#    (we learned something old). See schema/SCHEMA.md "Two clocks".
 set -euo pipefail
 
 TYPES="brain-init drop stakeholder-new stakeholder-update incentive-new incentive-update requirement-new requirement-update decision-new decision-superseded scope-move tension-opened tension-resolved project-new project-update log-entry confirm correction"
 
-CLIENT="" TYPE="" ENTITY="" SOURCE="" PROJECT="" ATTR="" REFS="" SUMMARY="" BODY=""
-while getopts "c:t:e:s:p:a:r:m:b:" flag; do
+CLIENT="" TYPE="" ENTITY="" SOURCE="" PROJECT="" ATTR="" REFS="" SUMMARY="" BODY="" BACKFILL=""
+while getopts "c:t:e:s:p:a:r:m:b:B" flag; do
   case "$flag" in
     c) CLIENT="$OPTARG" ;;
     t) TYPE="$OPTARG" ;;
@@ -23,6 +26,7 @@ while getopts "c:t:e:s:p:a:r:m:b:" flag; do
     r) REFS="$OPTARG" ;;
     m) SUMMARY="$OPTARG" ;;
     b) BODY="$OPTARG" ;;
+    B) BACKFILL="true" ;;
     *) exit 2 ;;
   esac
 done
@@ -69,6 +73,8 @@ Entity: $ENTITY
 if [ -n "$REFS" ]; then MSG+="Refs: $REFS
 "; fi
 if [ -n "$ATTR" ]; then MSG+="Attributed-To: $ATTR
+"; fi
+if [ -n "$BACKFILL" ]; then MSG+="Backfill: true
 "; fi
 MSG+="Source: $SOURCE"
 

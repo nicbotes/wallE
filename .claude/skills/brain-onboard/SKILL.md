@@ -27,6 +27,11 @@ built so a newcomer can operate credibly by the end of it.
    brain ("we self-hosted in Feb, reversed to cloud in July after the outage
    changed the economics — decided jointly by X and Y"). Use
    `npx tsx tools/query-log.ts --client <slug> --type decision-superseded`.
+   Build the chronology from **event dates** — `npx tsx tools/timeline.ts
+   <slug>` — never commit order. History we only learned recently is still
+   history: place it where it happened. Where a fact was reconstructed long
+   after the event, say so once ("we only learned this in March") — a newcomer
+   should know which parts of the story we watched and which we were told.
 
 5. **Live tensions** — every open one: who vs who, about what, what it
    blocks. These are the rooms the newcomer will walk into.

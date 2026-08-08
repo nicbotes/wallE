@@ -163,6 +163,39 @@ describe("commit-finding.sh gate", () => {
     ).toThrow(/summary exceeds 72/);
   });
 
+  it("stamps and reads back the Backfill trailer via -B", () => {
+    const repo = initRepo();
+    writeFileSync(path.join(repo, "decisions.md"), "old decision\n");
+    execFileSync(
+      "bash",
+      [
+        GATE,
+        "-c", "testco",
+        "-t", "decision-new",
+        "-e", "dec-20220614-security-review-gate",
+        "-s", "drop-2024-03-01-review",
+        "-B",
+        "-m", "2022 security review gate (backfilled)",
+        "decisions.md",
+      ],
+      { cwd: repo, encoding: "utf8" },
+    );
+    const commits = readFindingCommits(repo);
+    expect(commits[0]!.backfill).toBe(true);
+    expect(commits[0]!.source).toBe("drop-2024-03-01-review");
+  });
+
+  it("omits the Backfill trailer when -B is absent", () => {
+    const repo = initRepo();
+    writeFileSync(path.join(repo, "decisions.md"), "new decision\n");
+    execFileSync(
+      "bash",
+      [GATE, "-c", "t", "-t", "decision-new", "-e", "dec-1", "-s", "drop-2024-01-01-x", "-m", "m", "decisions.md"],
+      { cwd: repo, encoding: "utf8" },
+    );
+    expect(readFindingCommits(repo)[0]!.backfill).toBeUndefined();
+  });
+
   it("covers every documented finding type", () => {
     // Guard against taxonomy drift between FINDINGS.md, trailers.ts and the gate.
     const gateSource = execFileSync("cat", [GATE], { encoding: "utf8" });

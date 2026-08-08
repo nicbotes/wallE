@@ -18,6 +18,52 @@ cite it. If this document and a skill disagree, this document wins.
 5. **`last_confirmed` drives staleness.** Re-confirmation of an existing fact
    by a new drop bumps the date.
 
+## Two clocks: event time vs knowledge time
+
+Understanding arrives out of order. Someone explains in today's meeting why IT
+has distrusted us since a failed migration three years ago; a client hands over
+an archive of old decision records. That is **backfill**, and the brain models
+it with two independent clocks:
+
+| Clock | Where it lives | Answers |
+| --- | --- | --- |
+| **Event time** | the entity's own `date` / `opened` / `since` / log heading, and a drop's `date` | *When did this happen?* |
+| **Knowledge time** | the entity's `source` (+ `sources`), the drop's `ingested`, and the commit itself | *When did we learn it?* |
+
+Consequences that everything else follows from:
+
+- **An entity's event date may be far earlier than the drop that taught us.**
+  A decision made in 2022 and first described to us in 2026 is
+  `date: 2022-…`, `source: drop-2026-…`. That is correct and expected, not a
+  data error.
+- **Event date may never be later than its source drop's date** — you cannot
+  learn about something that has not happened. The validator enforces this.
+- **Backfilled context is current context.** It lands in the projections
+  (`stakeholders.md`, `decisions.md`, …) exactly like anything else, so
+  `brain-recall` and `brain-onboard` draw on it immediately. Git history
+  records only *when we learned it*; nobody should have to read git to know the
+  backstory.
+- **Files are ordered by event time, not arrival time.** Backfilled entries are
+  inserted in date order among their peers — the decision log and delivery log
+  read as chronologies. (Append-only refers to never deleting, not to always
+  writing at the bottom.)
+- **`first_seen` is the earliest drop by event date that mentions the person.**
+  Backfilling an older drop that features an existing stakeholder corrects it
+  via `stakeholder-update`.
+- **`last_confirmed` is knowledge time, but only for present-tense claims.** A
+  drop that asserts a fact still holds bumps it to the drop's date. A drop
+  merely recounting history ("back then we decided X") does *not* — it tells us
+  about the past, not the present.
+
+Two ways backfill arrives, handled differently:
+
+1. **A historical artifact** (an old email, an archived decision record). It is
+   its own drop, dated when it was *written* — `date: 2021-…`, `ingested:
+   2026-…`. Drops need not be ingested in date order.
+2. **History recounted in a current conversation.** The drop is dated *today*
+   (that meeting really did happen today); the entities extracted from it carry
+   their own, older event dates.
+
 ## Layout per client
 
 ```
@@ -237,6 +283,11 @@ fenced yaml blocks under headings.
 - A scope item's `state` must match the section (`## In`/`## Out`/`## Undecided`)
   it sits under.
 - Every entity's `source`/`sources` drops must exist in `drops/`.
+- **No entity's event date is later than its source drop's date** (you cannot
+  record what has not happened yet). Much *earlier* is fine — that is backfill.
+  Something not yet decided is a tension/open question, not a future-dated
+  decision.
+- A drop's `ingested` date is never earlier than its `date`.
 
 ## Schema evolution
 

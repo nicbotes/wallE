@@ -34,6 +34,15 @@ is historical and undated, ask — never silently stamp today's date on old
 material. Pick the type: `meeting | workshop | email | slack | incident |
 update | note` (dictated/spoken context = `note`).
 
+Two clocks apply (see `schema/SCHEMA.md`) — decide which case you're in:
+
+- **A historical artifact** (an old email, an archived record handed over now):
+  the drop's `date` is when it was *written*; `ingested` is today. Drops need
+  not arrive in date order.
+- **History recounted in a current conversation:** the drop is dated **today** —
+  that meeting did happen today — and the *entities* you extract from it carry
+  their own, older event dates. Do not backdate the drop to the story it tells.
+
 ### 3. Save the drop — first commit
 Write `clients/<slug>/drops/YYYY-MM-DD-<short-label>.md`:
 - Frontmatter per SCHEMA.md (`id`, `date`, `type`, `title`, `participants` with
@@ -72,21 +81,43 @@ While drafting:
 - **Noise stays out.** Small talk, tangents, and possibilities explicitly *not*
   decided are not findings. When in doubt whether something is a finding, it
   probably isn't — but say so in your narration (step 8).
+- **Backstory is a finding, dated when it happened.** When a drop explains
+  history — an old decision nobody told us about, why someone has been wary
+  since a failed project, a requirement's real origin — record it with its
+  **own event date**, `source` = this drop, and `Backfill: true` on the commit.
+  It is not a git-history footnote; it becomes live context the moment it
+  lands. Date what you can pin down; if only the year or "about two years ago"
+  is known, use a defensible approximation and say so in the prose rather than
+  inventing precision.
+- **Backfill can reach into existing entities:** an older drop that features a
+  known stakeholder corrects their `first_seen` (`stakeholder-update`);
+  learning who was really behind an `unattributed` requirement is a
+  `requirement-update`; learning of the decision that one we already hold
+  replaced is a single `decision-superseded` (see `schema/FINDINGS.md`).
+  None of these are `correction`s — we weren't wrong, we just didn't know.
+- **Recounted history doesn't bump `last_confirmed`.** Only a present-tense
+  claim ("that's still our position") re-confirms a fact; "back then we
+  decided X" does not.
 
 Order the ledger by dependency: stakeholders → projects → incentives /
 requirements / decisions / scope → tensions → log entries → confirm.
 
 ### 6. Apply, one finding at a time
 For each ledger line: make the edit (match the template headings and yaml
-field sets exactly — SCHEMA.md is normative), then commit immediately:
+field sets exactly — SCHEMA.md is normative), then commit immediately.
+**Insert entries in event-date order** among their peers — a backfilled 2022
+decision goes above the 2024 ones, so the decision and delivery logs read as
+chronologies. Append-only means never deleting, not always writing last.
 
 ```
 tools/commit-finding.sh -c <slug> -t <finding-type> -e <entity-id> \
-    -s <drop-id> [-p <proj-id>] [-a <sh-id>] [-r <refs>] \
+    -s <drop-id> [-p <proj-id>] [-a <sh-id>] [-r <refs>] [-B] \
     -m "<imperative summary ≤72 chars>" <changed file(s)>
 ```
 
-Every commit from this ingest carries the same `-s <drop-id>`.
+Every commit from this ingest carries the same `-s <drop-id>`. Pass `-B` when
+the finding's event date predates the drop by more than ~a month — it stamps
+`Backfill: true`.
 New project? Copy `projects/_template` → `projects/<proj-slug>` and commit as
 `project-new` before anything that lives inside it.
 

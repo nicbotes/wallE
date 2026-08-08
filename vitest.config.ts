@@ -9,6 +9,8 @@ export default defineConfig({
           name: "unit",
           include: ["tools/**/*.test.ts"],
           passWithNoTests: true,
+          // Several tests shell out to the CLIs (tsx startup ≈ 1s each).
+          testTimeout: 30_000,
         },
       },
       {

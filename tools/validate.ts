@@ -18,6 +18,10 @@ const CONFIDENCES = ["high", "medium", "low"];
 const DROP_TYPES = ["meeting", "workshop", "email", "slack", "incident", "update", "note"];
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
+/** YAML may hand us a Date or a string; normalise to YYYY-MM-DD. */
+const asDate = (v: unknown): string =>
+  v instanceof Date ? v.toISOString().slice(0, 10) : String(v ?? "");
+
 export interface ValidationResult {
   errors: string[];
   warnings: string[];
@@ -64,6 +68,30 @@ export function validateBrain(brain: Brain): ValidationResult {
     if (!set.includes(String(v))) errors.push(`${where}: ${field} "${v}" not in [${set.join("|")}]`);
   };
 
+  // Two clocks (schema/SCHEMA.md): an entity's event date may be far EARLIER
+  // than the drop that taught us (backfill), but never later — you cannot
+  // record what has not happened yet.
+  const dropDate = new Map<string, string>();
+  for (const d of brain.drops) {
+    if (d.id && d.date) dropDate.set(d.id, asDate(d.date));
+  }
+  const notAfterSource = (
+    eventDate: unknown,
+    source: unknown,
+    where: string,
+    field: string,
+  ) => {
+    if (!eventDate || !source) return;
+    const known = dropDate.get(String(source));
+    if (!known) return; // dangling source is reported separately
+    const ev = asDate(eventDate);
+    if (DATE_RE.test(ev) && DATE_RE.test(known) && ev > known)
+      errors.push(
+        `${where}: ${field} ${ev} is later than its source drop ${source} (${known}) — ` +
+          `we cannot have learned about it yet; something not yet decided is a tension`,
+      );
+  };
+
   // --- profile ---------------------------------------------------------------
   if (!brain.profile) errors.push("client.md: missing or unparseable");
   else {
@@ -82,6 +110,14 @@ export function validateBrain(brain: Brain): ValidationResult {
     const expectedFile = `drops/${String(d.id).replace(/^drop-/, "")}.md`;
     if (d.id && d.path !== expectedFile)
       errors.push(`${where}: filename does not match id (expected ${expectedFile})`);
+    // A drop may be ingested long after it was written (an archived email),
+    // but never before.
+    if (d.ingested && d.date) {
+      const ing = asDate(d.ingested);
+      const dt = asDate(d.date);
+      if (DATE_RE.test(ing) && DATE_RE.test(dt) && ing < dt)
+        errors.push(`${where}: ingested ${ing} is earlier than the drop date ${dt}`);
+    }
   }
 
   // --- stakeholders ----------------------------------------------------------
@@ -122,6 +158,7 @@ export function validateBrain(brain: Brain): ValidationResult {
     if (!Array.isArray(d.decided_by)) errors.push(`${where}: decided_by must be a list`);
     else for (const sh of d.decided_by) refSh(sh, where, "decided_by");
     refDrop(d.source, where, "source");
+    notAfterSource(d.date, d.source, where, "date");
     // supersession chain integrity
     if (d.supersedes) {
       if (!decIds.has(d.supersedes))
@@ -159,6 +196,7 @@ export function validateBrain(brain: Brain): ValidationResult {
     else for (const sh of t.between) refSh(sh, where, "between");
     date(t.opened, where, "opened");
     refDrop(t.source, where, "source");
+    notAfterSource(t.opened, t.source, where, "opened");
     if (t.status === "resolved") {
       date(t.resolved, where, "resolved");
       if (t.resolved_by && !decIds.has(t.resolved_by))
@@ -190,6 +228,7 @@ export function validateBrain(brain: Brain): ValidationResult {
       date(s.since, where, "since");
       for (const sh of s.decided_by ?? []) refSh(sh, where, "decided_by");
       refDrop(s.source, where, "source");
+      notAfterSource(s.since, s.source, where, "since");
     }
 
     for (const r of p.requirements) {
@@ -203,6 +242,7 @@ export function validateBrain(brain: Brain): ValidationResult {
       oneOf(r.status, ["active", "delivered", "dropped", "superseded"], where, "status");
       oneOf(r.priority, ["must", "should", "could", "unknown"], where, "priority");
       refDrop(r.source, where, "source");
+      notAfterSource(r.date, r.source, where, "date");
       date(r.last_confirmed, where, "last_confirmed");
     }
 
@@ -211,6 +251,7 @@ export function validateBrain(brain: Brain): ValidationResult {
       oneOf(l.kind, ["update", "incident", "milestone"], where, "kind");
       date(l.date, where, "date");
       refDrop(l.source, where, "source");
+      notAfterSource(l.date, l.source, where, "date");
       for (const sh of l.involves ?? []) refSh(sh, where, "involves");
     }
   }

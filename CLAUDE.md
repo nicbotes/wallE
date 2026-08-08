@@ -11,8 +11,8 @@ capabilities.
   (every raw input, verbatim); everything else is a curated projection of it.
 - `schema/SCHEMA.md` — the normative spec for brain files, entities, and IDs.
 - `schema/FINDINGS.md` — the finding taxonomy and commit protocol.
-- `tools/` — deterministic helpers (validate, query-log, staleness, search,
-  commit-finding.sh). Run TypeScript tools with `npx tsx tools/<name>.ts`.
+- `tools/` — deterministic helpers (validate, query-log, timeline, staleness,
+  search, commit-finding.sh). Run TypeScript tools with `npx tsx tools/<name>.ts`.
 - `eval/` — synthetic corpus + goldens + harness that grade the extraction
   skills. **Never read `eval/` when doing real client work** — it is quality
   infrastructure, not knowledge.
@@ -25,7 +25,11 @@ capabilities.
 4. **Every raw input is saved verbatim to `drops/` and committed before any
    extraction.** Drops are immutable after commit.
 5. **One finding, one commit**, always through `tools/commit-finding.sh`.
-6. After changing a brain, run `npx tsx tools/validate.ts <client-slug>`.
+6. **Two clocks.** An entity's date is when it *happened*; its `source` and
+   commit are when we *learned* it. Backstory told late is dated to the past
+   and marked `Backfill: true` — it becomes live context immediately, never a
+   git-history footnote.
+7. After changing a brain, run `npx tsx tools/validate.ts <client-slug>`.
 
 ## Which skill when
 

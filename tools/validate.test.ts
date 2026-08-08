@@ -16,6 +16,11 @@ describe("validateBrain on the clean fixture", () => {
   it("warns about the unattributed requirement", () => {
     expect(result.warnings.some((w) => w.includes("req-fast-dashboards"))).toBe(true);
   });
+
+  it("accepts backfill — an event dated long before the drop that taught us", () => {
+    // dec-20220614-security-review-gate: 2022 decision, learned via a 2024 drop.
+    expect(result.errors.filter((e) => e.includes("security-review-gate"))).toEqual([]);
+  });
 });
 
 describe("validateBrain on the poisoned fixture", () => {
@@ -54,6 +59,14 @@ describe("validateBrain on the poisoned fixture", () => {
 
   it("catches tension resolved without a date", () => {
     expectError("(ten-ghost-fight): missing resolved");
+  });
+
+  it("catches an event dated later than the drop that taught us", () => {
+    expectError("date 2025-09-01 is later than its source drop drop-2024-03-15-workshop");
+  });
+
+  it("catches a drop ingested before it was written", () => {
+    expectError("ingested 2024-03-01 is earlier than the drop date 2024-03-15");
   });
 
   it("catches scope section/state mismatch and out-of-section items", () => {

@@ -20,7 +20,17 @@ to narrate the delta as *changes in understanding*, not file edits.
    ```
    For any event needing depth, `git show <sha>` gives the exact diff.
 
-3. **Narrate, most consequential first** — always as was → is:
+3. **Separate two kinds of change.** A diff answers "what changed in our
+   understanding", and understanding changes two ways:
+   - **What happened** — new events since the anchor.
+   - **What we learned about the past** — backfill (commits carrying
+     `Backfill: true`; `--json` from query-log exposes it). Put these under
+     their own heading, e.g. "Newly learned history", and give each its event
+     date: "we now know IT has distrusted us since a failed 2022 migration".
+   Never present backfill as if it just happened — and never bury it either;
+   late-arriving backstory often explains more than the month's actual events.
+
+4. **Narrate, most consequential first** — always as was → is:
    - **Reversals first**: decisions superseded (what was decided, what
      replaced it, who, why).
    - **People**: arrivals, departures, disposition and reporting-line shifts.
@@ -29,7 +39,7 @@ to narrate the delta as *changes in understanding*, not file edits.
    - **Delivery events**: incidents, milestones.
    Group by project where it helps. Every item: short SHA + source drop.
 
-4. **Close with the unchanged-but-live**: open tensions and stale facts that
+5. **Close with the unchanged-but-live**: open tensions and stale facts that
    did NOT move in the window — what's still hanging is part of the answer.
 
 If nothing material changed, say exactly that in one line.

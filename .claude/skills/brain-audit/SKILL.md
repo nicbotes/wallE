@@ -32,6 +32,11 @@ Reports first; fixes only with the user's approval, and then only via
    - Prose that asserts things the yaml doesn't (or vice versa).
    - Incentives still marked `inferred` that later drops effectively
      confirmed or refuted.
+   - **Backstory gaps**: dispositions with no recorded origin (why *is* this
+     person sceptical?), long-standing tensions with no history, engagements
+     whose pre-history predates the brain. These aren't defects — they're
+     the questions worth asking the next person who remembers. List them as
+     "backfill worth chasing".
 
 4. **Report**, grouped: `MECHANICAL` (validator errors) / `STALE` /
    `GAPS` (unattributed) / `JUDGMENT`. Each item: file, entity id, what's

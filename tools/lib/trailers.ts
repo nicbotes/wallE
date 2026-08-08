@@ -34,6 +34,8 @@ export interface FindingCommit {
   entity?: string;
   refs: string[];
   attributedTo?: string;
+  /** True when the finding's event date predates its source drop (backfill). */
+  backfill?: boolean;
   source?: string;
   /** Files touched by the commit (populated when requested). */
   files?: string[];
@@ -46,6 +48,7 @@ const TRAILER_KEYS: Record<string, keyof FindingCommit | "refs"> = {
   entity: "entity",
   refs: "refs",
   "attributed-to": "attributedTo",
+  backfill: "backfill",
   source: "source",
 };
 
@@ -83,6 +86,8 @@ export function readFindingCommits(
       if (!field) continue;
       if (field === "refs") {
         c.refs = value.split(",").map((s) => s.trim()).filter(Boolean);
+      } else if (field === "backfill") {
+        c.backfill = value.toLowerCase() === "true";
       } else {
         (c as unknown as Record<string, unknown>)[field] = value;
       }
@@ -118,6 +123,7 @@ export function formatCommitMessage(opts: {
   entity: string;
   refs?: string[];
   attributedTo?: string;
+  backfill?: boolean;
   source: string;
 }): string {
   const lines = [`${opts.findingType}(${opts.client}): ${opts.summary}`, ""];
@@ -128,6 +134,7 @@ export function formatCommitMessage(opts: {
   lines.push(`Entity: ${opts.entity}`);
   if (opts.refs?.length) lines.push(`Refs: ${opts.refs.join(", ")}`);
   if (opts.attributedTo) lines.push(`Attributed-To: ${opts.attributedTo}`);
+  if (opts.backfill) lines.push("Backfill: true");
   lines.push(`Source: ${opts.source}`);
   return lines.join("\n");
 }

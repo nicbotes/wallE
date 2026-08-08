@@ -16,6 +16,12 @@ with the person. This repo captures it instead:
 - **Changelog** — every finding is its own git commit with machine-parseable
   trailers. `git log` *is* the story of how understanding evolved; diffs show
   changes in thinking, not just changes in text.
+- **Two clocks** — understanding arrives out of order. When today's meeting
+  explains why IT has been wary since a failed 2021 migration, that lands in
+  the brain dated **2021** (when it happened), sourced to today's drop (when we
+  learned it). Backfilled backstory is first-class current context, not a
+  git-history footnote — `tools/timeline.ts` reads the story in event order,
+  `tools/query-log.ts` in the order we learned it.
 - **Quality** — a synthetic corpus with golden facts and an eval harness keep
   the extraction skills honest and catch regressions when prompts change.
 
@@ -102,7 +108,7 @@ CLAUDE.md            operating instructions for the agent
 docs/PLAN.md         the full build plan & design rationale
 schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) · templates/
 .claude/skills/      brain-init · brain-ingest · brain-recall · brain-diff · brain-audit · brain-onboard
-tools/               validate · query-log · staleness · search · commit-finding.sh
+tools/               validate · query-log · timeline · staleness · search · commit-finding.sh
 clients/             one brain per client (ships empty)
 eval/                corpus · goldens · harness · committed score reports
 ```

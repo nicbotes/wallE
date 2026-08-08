@@ -20,10 +20,10 @@ const manifest = parseYaml(readFileSync(path.join(CORPUS, "manifest.yaml"), "utf
 };
 
 describe("manifest", () => {
-  it("has 16 sequential drops", () => {
-    expect(manifest.drops).toHaveLength(16);
+  it("has sequential drops", () => {
+    expect(manifest.drops.length).toBeGreaterThanOrEqual(16);
     expect(manifest.drops.map((d) => d.seq)).toEqual(
-      Array.from({ length: 16 }, (_, i) => i + 1),
+      Array.from({ length: manifest.drops.length }, (_, i) => i + 1),
     );
   });
 
@@ -65,6 +65,37 @@ describe("goldens", () => {
       expect(existsSync(p), `${file} missing`).toBe(true);
       const g = parseYaml(readFileSync(p, "utf8")) as { drop: string };
       expect(g.drop, file).toBe(drop.id);
+    }
+  });
+
+  it("any golden asserting backfill uses event dates earlier than its drop", () => {
+    // Guards the two-clocks story in the corpus itself: a golden that demands
+    // Backfill: true must actually assert entities dated before the drop.
+    for (const { drop, file } of goldenFiles) {
+      const g = parseYaml(readFileSync(path.join(CORPUS, file), "utf8")) as {
+        deterministic?: {
+          commit_protocol?: { min_backfill?: number };
+          [k: string]: unknown;
+        };
+      };
+      const min = g.deterministic?.commit_protocol?.min_backfill;
+      if (!min) continue;
+      const dates: string[] = [];
+      const walk = (node: unknown): void => {
+        if (Array.isArray(node)) return node.forEach(walk);
+        if (node && typeof node === "object") {
+          const o = node as Record<string, unknown>;
+          const d = o["date"];
+          if (d) dates.push(d instanceof Date ? d.toISOString().slice(0, 10) : String(d));
+          Object.values(o).forEach(walk);
+        }
+      };
+      walk(g.deterministic);
+      const dropDate = String(drop.date);
+      expect(
+        dates.some((d) => d < dropDate),
+        `${file} asserts min_backfill but no entity is dated before ${dropDate}`,
+      ).toBe(true);
     }
   });
 
@@ -136,7 +167,7 @@ describe("entities allowlist", () => {
     for (const entries of Object.values(e)) {
       for (const entry of entries) {
         expect(entry.from).toBeGreaterThanOrEqual(1);
-        expect(entry.from).toBeLessThanOrEqual(16);
+        expect(entry.from).toBeLessThanOrEqual(manifest.drops.length);
       }
     }
   });

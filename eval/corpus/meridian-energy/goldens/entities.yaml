@@ -33,12 +33,16 @@ incentives:
       note: optional }                                                # Aisha: portal is why she joined
   - { from: 12, match: { keywords_any: [strategy, three-year, long] },
       note: optional }                                                # Tom: post-permanent horizon
+  - { from: 17, match: { keywords_any: [2021, crm, failure, blame] },
+      note: optional }                                                # Dana/Marcus: origin of caution (backfilled)
 
 decisions:
   - { from: 3,  match: { file: billing-replatform, date: 2024-02-14 } }   # self-hosted Postgres
   - { from: 7,  match: { file: billing-replatform, date: 2024-07-30 } }   # managed cloud (supersedes)
   - { from: 14, match: { file: customer-portal, date: 2025-07-02 } }      # buy SSO
   - { from: 15, match: { file: billing-replatform, date: 2025-09-10 } }   # phased cutover
+  # Backfilled in drop 17: event date 2022, first legitimately present at 17.
+  - { from: 17, match: { file: decisions.md, date: 2022-02-03 } }         # board security-review gate
 
 requirements:
   - { from: 2,  match: { file: billing-replatform, keywords_any: [dual] } }

@@ -19,6 +19,12 @@ is to serve it up with provenance.
   `confidence`; never present an inference as a fact.
 - **Surface tensions, don't smooth them.** If the question touches an area
   with an open tension, say so explicitly.
+- **Answer in event time.** Chronology comes from entity dates
+  (`npx tsx tools/timeline.ts <slug>`), not from commit order. Backstory we
+  learned late is ordinary context — a 2022 decision recounted to us last month
+  belongs in 2022 in any story you tell, and carries the same weight as
+  anything else. Mention *when we learned it* only where the gap matters (a
+  fact reconstructed after the fact, or one that explains why we were surprised).
 
 ## Modes
 

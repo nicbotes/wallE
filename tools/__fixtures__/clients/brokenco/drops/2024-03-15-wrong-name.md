@@ -4,7 +4,7 @@ date: 2024-03-15
 type: seance
 title: Workshop
 participants: [Cy Doe]
-ingested: 2024-03-15
+ingested: 2024-03-01
 ---
 
-Filename doesn't match id; type is not a valid enum.
+Filename doesn't match id; type is not a valid enum; ingested before the drop date.
