@@ -1,0 +1,21 @@
+# Cumulative expected state after drop 14 (portal auth incident + SSO decision).
+drop: drop-2025-07-02-portal-auth-incident
+deterministic:
+  decisions:
+    - match: { file: customer-portal, date: 2025-07-02, keywords_any: [sso] }
+      expect:
+        status: active
+        decided_by: { includes: [sh-tom-nagel] }
+  logs:
+    - match: { project: customer-portal, kind: incident, date: 2025-07-02 }
+  requirements:
+    - match: { file: customer-portal, keywords_any: [billing] }
+      expect: { stated_by: sh-aisha-bell, status: active }
+  drops:
+    - match: { id: drop-2025-07-02-portal-auth-incident }
+  commit_protocol:
+    source: drop-2025-07-02-portal-auth-incident
+    min_findings:
+      drop: 1
+      log-entry: 1
+      decision-new: 1

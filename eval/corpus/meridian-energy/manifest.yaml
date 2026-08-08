@@ -1,0 +1,23 @@
+# Ordered context drops for the Meridian Energy synthetic corpus.
+# Each drop's raw text is injected into the ingest prompt with the date/type
+# hints below — the corpus dir itself is never copied into the sandbox.
+client:
+  name: Meridian Energy
+  slug: meridian-energy
+drops:
+  - { seq: 1,  file: drops/01-kickoff.md,                id: drop-2024-01-10-kickoff,                date: 2024-01-10, type: meeting,  title: "Billing replatform kickoff" }
+  - { seq: 2,  file: drops/02-requirements-workshop.md,  id: drop-2024-01-24-requirements-workshop,  date: 2024-01-24, type: workshop, title: "Requirements workshop" }
+  - { seq: 3,  file: drops/03-architecture-review.md,    id: drop-2024-02-14-architecture-review,    date: 2024-02-14, type: meeting,  title: "Architecture review" }
+  - { seq: 4,  file: drops/04-delivery-update.md,        id: drop-2024-03-20-delivery-update,        date: 2024-03-20, type: update,   title: "March delivery update" }
+  - { seq: 5,  file: drops/05-cutover-workshop.md,       id: drop-2024-05-08-cutover-workshop,       date: 2024-05-08, type: workshop, title: "Cutover planning workshop" }
+  - { seq: 6,  file: drops/06-billing-outage.md,         id: drop-2024-06-12-billing-outage,         date: 2024-06-12, type: incident, title: "Legacy billing outage" }
+  - { seq: 7,  file: drops/07-steering.md,               id: drop-2024-07-30-steering,               date: 2024-07-30, type: meeting,  title: "July steering committee" }
+  - { seq: 8,  file: drops/08-priya-departure.md,        id: drop-2024-09-15-priya-departure,        date: 2024-09-15, type: email,    title: "Priya departure / Tom Nagel interim" }
+  - { seq: 9,  file: drops/09-scope-cut.md,              id: drop-2024-10-22-scope-cut,              date: 2024-10-22, type: meeting,  title: "Scope cut meeting" }
+  - { seq: 10, file: drops/10-year-end-review.md,        id: drop-2024-12-05-year-end-review,        date: 2024-12-05, type: meeting,  title: "Year-end review" }
+  - { seq: 11, file: drops/11-portal-kickoff.md,         id: drop-2025-01-20-portal-kickoff,         date: 2025-01-20, type: meeting,  title: "Customer portal kickoff" }
+  - { seq: 12, file: drops/12-restructure.md,            id: drop-2025-03-11-restructure,            date: 2025-03-11, type: email,    title: "Org restructure announcement" }
+  - { seq: 13, file: drops/13-portal-billing-thread.md,  id: drop-2025-05-19-portal-billing-thread,  date: 2025-05-19, type: email,    title: "Portal billing view email thread" }
+  - { seq: 14, file: drops/14-portal-auth-incident.md,   id: drop-2025-07-02-portal-auth-incident,   date: 2025-07-02, type: incident, title: "Portal pilot auth outage" }
+  - { seq: 15, file: drops/15-cutover-workshop-2.md,     id: drop-2025-09-10-cutover-workshop-2,     date: 2025-09-10, type: workshop, title: "Cutover workshop — phased plan" }
+  - { seq: 16, file: drops/16-exec-review.md,            id: drop-2025-11-18-exec-review,            date: 2025-11-18, type: meeting,  title: "Executive review" }

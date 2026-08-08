@@ -1,0 +1,30 @@
+# Cumulative expected state after drop 09 (scope cut).
+drop: drop-2024-10-22-scope-cut
+deterministic:
+  scope:
+    - match: { file: billing-replatform, keywords_any: [mobile] }
+      expect: { state: out, decided_by: { includes: [sh-marcus-webb] } }
+    - match: { file: billing-replatform, keywords_any: [engine] }
+      expect: { state: in }
+    - match: { file: billing-replatform, keywords_any: [stabilis, stabiliz, hermes] }
+      expect: { state: in }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [api] }
+      expect: { status: dropped }
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: active, last_confirmed: 2024-10-22 }
+  tensions:
+    - match: { keywords_any: [cutover, overtime] }
+      expect: { status: open }
+  stakeholders:
+    - match: { id: sh-tom-nagel }
+      expect: { status: active, disposition: skeptical }
+  drops:
+    - match: { id: drop-2024-10-22-scope-cut }
+  commit_protocol:
+    source: drop-2024-10-22-scope-cut
+    min_findings:
+      drop: 1
+      scope-move: 1
+      requirement-update: 1
+      confirm: 1

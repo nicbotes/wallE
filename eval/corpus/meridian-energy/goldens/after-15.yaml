@@ -1,0 +1,39 @@
+# Cumulative expected state after drop 15 (phased cutover resolves the deadlock).
+drop: drop-2025-09-10-cutover-workshop-2
+deterministic:
+  decisions:
+    - match: { file: billing-replatform, date: 2025-09-10, keywords_any: [phased] }
+      as: DEC_PHASED
+      expect:
+        status: active
+        decided_by: { includes: [sh-dana-okafor, sh-marcus-webb] }
+    - match: { file: billing-replatform, date: 2024-07-30 }
+      expect: { status: active }
+  tensions:
+    - match: { keywords_any: [cutover, overtime] }
+      expect:
+        status: resolved
+        resolved_by: { ref: DEC_PHASED }
+    - match: { keywords_any: [capacity, shared] }
+      expect: { status: open }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [downtime, zero] }
+      expect: { stated_by: sh-dana-okafor, status: superseded }
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: active }
+  drops:
+    - match: { id: drop-2025-09-10-cutover-workshop-2 }
+  commit_protocol:
+    source: drop-2025-09-10-cutover-workshop-2
+    min_findings:
+      drop: 1
+      decision-new: 1
+      tension-resolved: 1
+      requirement-update: 1
+judge:
+  - target: { type: requirement, file: billing-replatform, keywords_any: [downtime, zero] }
+    rubric: >-
+      The superseded zero-downtime requirement's record preserves Dana's
+      original intent (billing must never go dark) and makes clear the intent
+      is met by the phased approach — it does not read as Dana having changed
+      her mind or been overruled.

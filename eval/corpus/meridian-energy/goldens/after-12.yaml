@@ -1,0 +1,23 @@
+# Cumulative expected state after drop 12 (restructure: Tom permanent CTO).
+drop: drop-2025-03-11-restructure
+deterministic:
+  stakeholders:
+    - match: { id: sh-tom-nagel }
+      expect: { status: active, disposition: supportive }
+    - match: { id: sh-dana-okafor }
+      expect: { status: active, reports_to: sh-tom-nagel, disposition: skeptical }
+    - match: { id: sh-priya-sharma }
+      expect: { status: departed }
+  projects:
+    - match: { id: proj-customer-portal }
+      expect: { status: active }
+  tensions:
+    - match: { keywords_any: [capacity, shared] }
+      expect: { status: open }
+  drops:
+    - match: { id: drop-2025-03-11-restructure }
+  commit_protocol:
+    source: drop-2025-03-11-restructure
+    min_findings:
+      drop: 1
+      stakeholder-update: 2

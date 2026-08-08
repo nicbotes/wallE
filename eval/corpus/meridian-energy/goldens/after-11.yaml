@@ -1,0 +1,44 @@
+# Cumulative expected state after drop 11 (customer portal kickoff).
+drop: drop-2025-01-20-portal-kickoff
+deterministic:
+  projects:
+    - match: { id: proj-billing-replatform }
+      expect: { status: active }
+    - match: { id: proj-customer-portal }
+      expect: { status: active }
+  stakeholders:
+    - match: { id: sh-aisha-bell }
+      expect:
+        status: active
+        disposition: champion
+        influence: { one_of: [medium, high] }
+    - match: { id: sh-tom-nagel }
+      expect: { status: active }
+  scope:
+    - match: { file: customer-portal, keywords_any: [account, self-service] }
+      expect: { state: in }
+    - match: { file: customer-portal, keywords_any: [usage, dashboard] }
+      expect: { state: in }
+  tensions:
+    - match: { keywords_any: [capacity, shared] }
+      expect:
+        status: open
+        between: { includes: [sh-aisha-bell, sh-tom-nagel] }
+    - match: { keywords_any: [cutover, overtime] }
+      expect: { status: open }
+  drops:
+    - match: { id: drop-2025-01-20-portal-kickoff }
+  commit_protocol:
+    source: drop-2025-01-20-portal-kickoff
+    min_findings:
+      drop: 1
+      project-new: 1
+      stakeholder-new: 1
+      scope-move: 2
+      tension-opened: 1
+judge:
+  - target: { type: tension, keywords_any: [capacity, shared] }
+    rubric: >-
+      The tension entry's prose records BOTH positions — Aisha wanting the
+      shared platform-API team prioritised for the portal, Tom wanting them
+      protecting the billing migration — and does not declare a winner.

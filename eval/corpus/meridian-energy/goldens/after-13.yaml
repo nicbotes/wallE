@@ -1,0 +1,18 @@
+# Cumulative expected state after drop 13 (email thread: portal billing view).
+drop: drop-2025-05-19-portal-billing-thread
+deterministic:
+  requirements:
+    - match: { file: customer-portal, keywords_any: [billing] }
+      expect: { stated_by: sh-aisha-bell, priority: must, status: active }
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: active }
+  scope:
+    - match: { file: billing-replatform, keywords_any: [mobile] }
+      expect: { state: out }
+  drops:
+    - match: { id: drop-2025-05-19-portal-billing-thread }
+  commit_protocol:
+    source: drop-2025-05-19-portal-billing-thread
+    min_findings:
+      drop: 1
+      requirement-new: 1

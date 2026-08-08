@@ -1,0 +1,67 @@
+# Master allowlist for precision grading.
+#
+# After ingesting drop N, every structured entity in the brain must match one
+# entry here with `from <= N` — anything else is a hallucination (precision
+# hit). Entries marked `note: optional` are legitimate judgment-call
+# extractions that don't appear in the recall goldens.
+#
+# Deliberately NOT allowed (they are the red herrings / noise):
+# - JN / KT / RM (our own consultants) as stakeholders
+# - the data-warehouse idea (parked at kickoff), the BillFlow vendor mention,
+#   Marcus's ERP war story, the CRM/Kubernetes asides, farewell party logistics
+# - any decision entity for the June 2024 Hermes scope call (that's a
+#   scope-move, not a decision entity)
+
+stakeholders:
+  - { from: 1,  match: { id: sh-priya-sharma } }
+  - { from: 1,  match: { id: sh-marcus-webb } }
+  - { from: 1,  match: { id: sh-dana-okafor } }
+  - { from: 8,  match: { id: sh-tom-nagel } }
+  - { from: 11, match: { id: sh-aisha-bell } }
+
+projects:
+  - { from: 1,  match: { id: proj-billing-replatform } }
+  - { from: 11, match: { id: proj-customer-portal } }
+
+incentives:
+  - { from: 1,  match: { keywords_any: [cost] } }                     # Marcus: cost control
+  - { from: 1,  match: { keywords_any: [roadmap, priority, platform] },
+      note: optional }                                                # Priya: replatform as her top priority
+  - { from: 2,  match: { keywords_any: [blame, error, risk] } }       # Dana: never own a billing error
+  - { from: 10, match: { keywords_any: [quick] } }                    # Tom: quick wins (interim)
+  - { from: 11, match: { keywords_any: [portal, came to, build] },
+      note: optional }                                                # Aisha: portal is why she joined
+  - { from: 12, match: { keywords_any: [strategy, three-year, long] },
+      note: optional }                                                # Tom: post-permanent horizon
+
+decisions:
+  - { from: 3,  match: { file: billing-replatform, date: 2024-02-14 } }   # self-hosted Postgres
+  - { from: 7,  match: { file: billing-replatform, date: 2024-07-30 } }   # managed cloud (supersedes)
+  - { from: 14, match: { file: customer-portal, date: 2025-07-02 } }      # buy SSO
+  - { from: 15, match: { file: billing-replatform, date: 2025-09-10 } }   # phased cutover
+
+requirements:
+  - { from: 2,  match: { file: billing-replatform, keywords_any: [dual] } }
+  - { from: 2,  match: { file: billing-replatform, keywords_any: [api] } }
+  - { from: 2,  match: { file: billing-replatform, keywords_any: [csv] } }
+  - { from: 5,  match: { file: billing-replatform, keywords_any: [downtime, zero] } }
+  - { from: 13, match: { file: customer-portal, keywords_any: [billing, balance] } }
+
+tensions:
+  - { from: 3,  match: { keywords_any: [speed, pace, budget] } }      # Marcus vs Priya
+  - { from: 5,  match: { keywords_any: [cutover, overtime] } }        # Dana vs Marcus
+  - { from: 11, match: { keywords_any: [capacity, shared] } }         # Aisha vs Tom
+  - { from: 2,  match: { keywords_any: [csv, unowned, unattributed] },
+      note: optional }                                                # open question re CSV owner
+
+scope:
+  - { from: 1,  match: { file: billing-replatform, keywords_any: [engine] } }
+  - { from: 1,  match: { file: billing-replatform, keywords_any: [invoice] } }
+  - { from: 1,  match: { file: billing-replatform, keywords_any: [history] } }
+  - { from: 2,  match: { file: billing-replatform, keywords_any: [mobile] } }
+  - { from: 6,  match: { file: billing-replatform, keywords_any: [stabilis, stabiliz, hermes] } }
+  - { from: 11, match: { file: customer-portal, keywords_any: [account, self-service] } }
+  - { from: 11, match: { file: customer-portal, keywords_any: [usage, dashboard] } }
+  - { from: 11, match: { file: customer-portal, keywords_any: [chat] },
+      note: optional }                                                # live chat, parked to phase 2
+  - { from: 16, match: { file: customer-portal, keywords_any: [export, payment] } }

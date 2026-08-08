@@ -55,8 +55,8 @@ current state.
 List every candidate finding as: `<finding-type> | <entity-id> | <one-line>`.
 While drafting:
 
-- **Resolve names against existing stakeholders.** "Tom" might be
-  `sh-tom-nagel`. Check role and context. If still unsure who is meant, do NOT
+- **Resolve names against existing stakeholders.** "Sam" might be
+  `sh-sam-osei`. Check role and context. If still unsure who is meant, do NOT
   guess — record it as a `tension-opened` (kind: open question) instead.
 - **New people** get deterministic IDs: `sh-<given>-<family>` from the name as
   written; on collision append `-2`.

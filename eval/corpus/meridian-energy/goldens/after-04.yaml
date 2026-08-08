@@ -1,0 +1,32 @@
+# Cumulative expected state after drop 04 (March delivery update).
+# Confirm-batching test: re-confirmations must be one batched confirm commit.
+drop: drop-2024-03-20-delivery-update
+deterministic:
+  stakeholders:
+    - match: { id: sh-priya-sharma }
+      expect: { status: active, disposition: champion }
+    - match: { id: sh-marcus-webb }
+      expect: { status: active, disposition: skeptical }
+    - match: { id: sh-dana-okafor }
+      expect: { status: active, disposition: neutral }
+  projects:
+    - match: { id: proj-billing-replatform }
+      expect: { status: active }
+  decisions:
+    - match: { file: billing-replatform, date: 2024-02-14 }
+      expect: { status: active }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: active, last_confirmed: 2024-03-20 }
+    - match: { file: billing-replatform, keywords_any: [api] }
+      expect: { stated_by: sh-priya-sharma, status: active }
+  logs:
+    - match: { project: billing-replatform, kind: milestone, date: 2024-03-20 }
+  drops:
+    - match: { id: drop-2024-03-20-delivery-update }
+  commit_protocol:
+    source: drop-2024-03-20-delivery-update
+    min_findings:
+      drop: 1
+      log-entry: 1
+      confirm: 1

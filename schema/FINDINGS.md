@@ -35,13 +35,13 @@ understanding; these commits are its records.
 
 <optional 1–3 sentence body>
 
-Client: meridian-energy
-Project: proj-billing-replatform
+Client: acme-utilities
+Project: proj-crm-rollout
 Finding: decision-superseded
-Entity: dec-20240730-managed-cloud
-Refs: dec-20240214-selfhost-postgres
-Attributed-To: sh-marcus-webb
-Source: drop-2024-07-30-steering
+Entity: dec-20240718-buy-not-build
+Refs: dec-20240211-build-inhouse
+Attributed-To: sh-bo-reyes
+Source: drop-2024-07-18-steering
 ```
 
 Trailer rules:
@@ -61,7 +61,7 @@ Standard git trailers — queryable with:
 ```
 git log --format='%H %(trailers:key=Finding,valueonly,separator=%x2C)'
 git log --grep 'Finding: decision-superseded'
-npx tsx tools/query-log.ts --client meridian-energy --type decision-superseded
+npx tsx tools/query-log.ts --client acme-utilities --type decision-superseded
 ```
 
 ## Ingest ordering (per drop)

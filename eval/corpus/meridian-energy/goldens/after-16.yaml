@@ -1,0 +1,42 @@
+# Cumulative expected state after drop 16 (executive review — delivery).
+drop: drop-2025-11-18-exec-review
+deterministic:
+  projects:
+    - match: { id: proj-billing-replatform }
+      expect: { status: delivered }
+    - match: { id: proj-customer-portal }
+      expect: { status: active }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: delivered }
+    - match: { file: customer-portal, keywords_any: [billing] }
+      expect: { stated_by: sh-aisha-bell, status: active }
+  scope:
+    - match: { file: customer-portal, keywords_any: [export, payment] }
+      expect: { state: undecided }
+  tensions:
+    - match: { keywords_any: [capacity, shared] }
+      expect: { status: open }
+    - match: { keywords_any: [cutover, overtime] }
+      expect: { status: resolved }
+  stakeholders:
+    - match: { id: sh-tom-nagel }
+      expect: { status: active, disposition: supportive }
+    - match: { id: sh-aisha-bell }
+      expect: { status: active, disposition: champion }
+    - match: { id: sh-dana-okafor }
+      expect: { status: active }
+    - match: { id: sh-marcus-webb }
+      expect: { status: active }
+    - match: { id: sh-priya-sharma }
+      expect: { status: departed }
+  drops:
+    - match: { id: drop-2025-11-18-exec-review }
+  commit_protocol:
+    source: drop-2025-11-18-exec-review
+    min_findings:
+      drop: 1
+      project-update: 1
+      requirement-update: 1
+      scope-move: 1
+      confirm: 1

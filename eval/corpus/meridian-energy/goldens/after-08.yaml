@@ -1,0 +1,21 @@
+# Cumulative expected state after drop 08 (Priya departs; Tom Nagel arrives).
+drop: drop-2024-09-15-priya-departure
+deterministic:
+  stakeholders:
+    - match: { id: sh-priya-sharma }
+      expect: { status: departed }
+    - match: { id: sh-tom-nagel }
+      expect: { status: active, disposition: skeptical, influence: high }
+    - match: { id: sh-dana-okafor }
+      expect: { status: active, reports_to: sh-tom-nagel }
+  decisions:
+    - match: { file: billing-replatform, date: 2024-07-30 }
+      expect: { status: active }
+  drops:
+    - match: { id: drop-2024-09-15-priya-departure }
+  commit_protocol:
+    source: drop-2024-09-15-priya-departure
+    min_findings:
+      drop: 1
+      stakeholder-new: 1
+      stakeholder-update: 2

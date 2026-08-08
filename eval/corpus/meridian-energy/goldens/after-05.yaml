@@ -1,0 +1,31 @@
+# Cumulative expected state after drop 05 (cutover workshop — the deadlock).
+drop: drop-2024-05-08-cutover-workshop
+deterministic:
+  stakeholders:
+    - match: { id: sh-dana-okafor }
+      expect: { status: active, disposition: neutral }
+    - match: { id: sh-marcus-webb }
+      expect: { status: active, disposition: skeptical }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [downtime, zero] }
+      expect: { stated_by: sh-dana-okafor, priority: must, status: active }
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: active }
+  tensions:
+    - match: { keywords_any: [cutover, overtime] }
+      expect:
+        status: open
+        between: { includes: [sh-dana-okafor, sh-marcus-webb] }
+    - match: { keywords_any: [speed, pace, budget] }
+      expect: { status: open }
+  decisions:
+    - match: { file: billing-replatform, date: 2024-02-14 }
+      expect: { status: active }
+  drops:
+    - match: { id: drop-2024-05-08-cutover-workshop }
+  commit_protocol:
+    source: drop-2024-05-08-cutover-workshop
+    min_findings:
+      drop: 1
+      requirement-new: 1
+      tension-opened: 1

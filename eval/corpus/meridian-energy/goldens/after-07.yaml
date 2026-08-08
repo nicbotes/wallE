@@ -1,0 +1,43 @@
+# Cumulative expected state after drop 07 (steering — the decision reversal).
+drop: drop-2024-07-30-steering
+deterministic:
+  decisions:
+    - match: { file: billing-replatform, date: 2024-02-14 }
+      as: DEC_SELFHOST
+      expect:
+        status: superseded
+        superseded_by: { ref: DEC_CLOUD }
+    - match: { file: billing-replatform, date: 2024-07-30, keywords_any: [cloud, managed] }
+      as: DEC_CLOUD
+      expect:
+        status: active
+        supersedes: { ref: DEC_SELFHOST }
+        decided_by: { includes: [sh-marcus-webb, sh-priya-sharma] }
+  tensions:
+    - match: { keywords_any: [speed, pace, budget] }
+      expect:
+        status: resolved
+        resolved_by: { ref: DEC_CLOUD }
+    - match: { keywords_any: [cutover, overtime] }
+      expect: { status: open }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: active }
+  stakeholders:
+    - match: { id: sh-dana-okafor }
+      expect: { status: active, disposition: skeptical }
+  drops:
+    - match: { id: drop-2024-07-30-steering }
+  commit_protocol:
+    source: drop-2024-07-30-steering
+    min_findings:
+      drop: 1
+      decision-superseded: 1
+      tension-resolved: 1
+judge:
+  - target: { type: decision, file: billing-replatform, date: 2024-07-30 }
+    rubric: >-
+      The managed-cloud entry's prose explains WHY the February decision was
+      reversed (the June outage changed the infrastructure economics / cost
+      pressure) and records that Marcus and Priya made it jointly, without
+      blaming Priya for the original call.

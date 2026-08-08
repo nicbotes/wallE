@@ -1,0 +1,44 @@
+# Cumulative expected state after drop 03 (architecture review).
+drop: drop-2024-02-14-architecture-review
+deterministic:
+  stakeholders:
+    - match: { id: sh-priya-sharma }
+      expect: { status: active, disposition: champion, influence: high }
+    - match: { id: sh-marcus-webb }
+      expect: { status: active, disposition: skeptical, influence: high }
+    - match: { id: sh-dana-okafor }
+      expect: { status: active, disposition: neutral, influence: medium }
+  projects:
+    - match: { id: proj-billing-replatform }
+      expect: { status: active }
+  decisions:
+    - match: { file: billing-replatform, date: 2024-02-14, keywords_any: [self, postgres] }
+      as: DEC_SELFHOST
+      expect:
+        status: active
+        decided_by: { includes: [sh-priya-sharma] }
+  tensions:
+    - match: { keywords_any: [speed, pace, budget] }
+      expect:
+        status: open
+        between: { includes: [sh-marcus-webb, sh-priya-sharma] }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, priority: must, status: active }
+    - match: { file: billing-replatform, keywords_any: [api] }
+      expect: { stated_by: sh-priya-sharma, status: active }
+  drops:
+    - match: { id: drop-2024-02-14-architecture-review }
+  commit_protocol:
+    source: drop-2024-02-14-architecture-review
+    min_findings:
+      drop: 1
+      decision-new: 1
+      tension-opened: 1
+judge:
+  - target: { type: decision, file: billing-replatform, date: 2024-02-14 }
+    rubric: >-
+      The decision entry's prose records at least two of Priya's three stated
+      reasons for self-hosting (team knows Postgres; data-centre capacity
+      already paid for; simpler data-residency reviews) and does not present
+      the decision as tentative or pending.

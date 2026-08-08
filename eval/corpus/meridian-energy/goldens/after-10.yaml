@@ -1,0 +1,27 @@
+# Cumulative expected state after drop 10 (year-end review).
+drop: drop-2024-12-05-year-end-review
+deterministic:
+  projects:
+    - match: { id: proj-billing-replatform }
+      expect: { status: active, phase: { one_of: [migrate, migration] } }
+  incentives:
+    - match: { file: incentives.md, keywords_any: [quick] }
+      expect: { stakeholder: sh-tom-nagel, kind: stated, confidence: high }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, status: active }
+  decisions:
+    - match: { file: billing-replatform, date: 2024-07-30 }
+      expect: { status: active }
+  tensions:
+    - match: { keywords_any: [cutover, overtime] }
+      expect: { status: open }
+  drops:
+    - match: { id: drop-2024-12-05-year-end-review }
+  commit_protocol:
+    source: drop-2024-12-05-year-end-review
+    min_findings:
+      drop: 1
+      project-update: 1
+      incentive-new: 1
+      confirm: 1

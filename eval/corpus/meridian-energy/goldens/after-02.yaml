@@ -1,0 +1,46 @@
+# Cumulative expected state after drop 02 (requirements workshop).
+drop: drop-2024-01-24-requirements-workshop
+deterministic:
+  stakeholders:
+    - match: { id: sh-priya-sharma }
+      expect: { status: active, disposition: champion, influence: high }
+    - match: { id: sh-marcus-webb }
+      expect: { status: active, disposition: skeptical, influence: high }
+    - match: { id: sh-dana-okafor }
+      expect: { status: active, disposition: neutral, influence: medium, reports_to: sh-priya-sharma }
+  projects:
+    - match: { id: proj-billing-replatform }
+      expect: { status: active }
+  incentives:
+    - match: { file: incentives.md, keywords_any: [cost] }
+      expect: { stakeholder: sh-marcus-webb, kind: stated }
+    - match: { file: incentives.md, keywords_any: [blame, error, risk] }
+      expect:
+        stakeholder: sh-dana-okafor
+        kind: inferred
+        confidence: { one_of: [low, medium] }
+  requirements:
+    - match: { file: billing-replatform, keywords_any: [dual] }
+      expect: { stated_by: sh-dana-okafor, priority: must, status: active }
+    - match: { file: billing-replatform, keywords_any: [api] }
+      expect: { stated_by: sh-priya-sharma, priority: should, status: active }
+    - match: { file: billing-replatform, keywords_any: [csv] }
+      expect: { stated_by: unattributed, status: active }
+  scope:
+    - match: { file: billing-replatform, keywords_any: [engine] }
+      expect: { state: in }
+    - match: { file: billing-replatform, keywords_any: [invoice] }
+      expect: { state: in }
+    - match: { file: billing-replatform, keywords_any: [history] }
+      expect: { state: in }
+    - match: { file: billing-replatform, keywords_any: [mobile] }
+      expect: { state: undecided }
+  drops:
+    - match: { id: drop-2024-01-24-requirements-workshop }
+  commit_protocol:
+    source: drop-2024-01-24-requirements-workshop
+    min_findings:
+      drop: 1
+      requirement-new: 3
+      scope-move: 1
+      incentive-new: 1

@@ -1,0 +1,37 @@
+# Cumulative expected state after drop 06 (legacy billing outage).
+drop: drop-2024-06-12-billing-outage
+deterministic:
+  stakeholders:
+    - match: { id: sh-dana-okafor }
+      expect: { status: active, disposition: skeptical }   # the outage turned her
+    - match: { id: sh-priya-sharma }
+      expect: { status: active, disposition: champion }
+  incentives:
+    - match: { file: incentives.md, keywords_any: [blame, error, risk] }
+      expect:
+        stakeholder: sh-dana-okafor
+        confidence: high                       # hypothesis confirmed by her own words
+        kind: { one_of: [stated, inferred] }
+  scope:
+    - match: { file: billing-replatform, keywords_any: [stabilis, stabiliz, hermes] }
+      expect: { state: in, decided_by: { includes: [sh-priya-sharma] } }
+    - match: { file: billing-replatform, keywords_any: [engine] }
+      expect: { state: in }
+  logs:
+    - match: { project: billing-replatform, kind: incident, date: 2024-06-12 }
+  drops:
+    - match: { id: drop-2024-06-12-billing-outage }
+  commit_protocol:
+    source: drop-2024-06-12-billing-outage
+    min_findings:
+      drop: 1
+      log-entry: 1
+      scope-move: 1
+      stakeholder-update: 1
+      incentive-update: 1
+judge:
+  - target: { type: stakeholder, id: sh-dana-okafor }
+    rubric: >-
+      Dana's entry (yaml aside) records the June 2024 shift from wait-and-see
+      to open scepticism and ties it to the Hermes outage, without
+      editorialising about whether her reaction was justified.
