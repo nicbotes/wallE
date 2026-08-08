@@ -58,15 +58,25 @@ is objectively identifiable. The harness replays drops through the real ingest
 skill in a hermetic sandbox and grades the resulting brain + git log:
 
 ```bash
-cp .env.example .env                # set ANTHROPIC_API_KEY
-npm run eval -- --smoke             # cheap check: 3 drops, no judge
-npm run eval -- --drops all --judge on   # full baseline
-npx vitest run --project unit       # deterministic tool tests (no API key)
+npx vitest run --project unit       # tool tests — no API key needed
+npx vitest run --project corpus     # corpus integrity + GRADER SELF-TEST — no API key
+cp .env.example .env                # set ANTHROPIC_API_KEY, then:
+npm run eval -- --smoke             # cheap check: 3 drops on haiku, no judge
+npm run eval -- --drops all --judge on --baseline   # full baseline
+npm run eval -- --drops 7 --stale-ok                # re-run one drop from cache
+npx tsx eval/src/recall.ts          # question-answering eval vs after-16 state
+npx vitest run --project scores     # regression gate against metric floors
 ```
 
-Reports land in `eval/reports/` with per-metric scores (fact recall, precision,
-attribution, supersession, commit-protocol compliance) and a failure appendix,
-so skill-prompt changes show their score delta.
+The grader self-test replays a scripted *perfect* ingest and requires every
+metric to score 1.0 — plus negative cases proving each metric catches its
+failure mode — so the graders themselves are under test without an API key.
+
+Baseline reports land in `eval/reports/` with per-metric scores (fact recall,
+precision, attribution, supersession, commit-protocol compliance), cost, a
+delta vs the previous baseline, and a per-failure appendix — so skill-prompt
+changes show their score delta. See `eval/reports/README.md` for the baseline
+procedure (none committed yet; it's a one-command local run).
 
 ## Derived layers (optional, always rebuildable)
 
