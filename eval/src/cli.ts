@@ -36,7 +36,15 @@ const CORPUS = path.join(REPO, "eval", "corpus", "meridian-energy");
 
 interface Manifest {
   client: { name: string; slug: string };
-  drops: { seq: number; file: string; id: string; date: string; type: string; title: string }[];
+  drops: {
+    seq: number;
+    file: string;
+    id: string;
+    date: string;
+    type: string;
+    title: string;
+    source_tool?: string;
+  }[];
 }
 
 function arg(name: string, fallback?: string): string | undefined {
@@ -109,6 +117,7 @@ async function main(): Promise<void> {
       type: m.type,
       title: m.title,
       text: readFileSync(path.join(CORPUS, m.file), "utf8"),
+      ...(m.source_tool ? { sourceTool: m.source_tool } : {}),
     };
     console.log(`\n[${seq}/${manifest.drops.length}] ingesting ${m.id} (${model})…`);
     const prevTag = seq > 1 ? `eval/after-${String(seq - 1).padStart(2, "0")}` : null;

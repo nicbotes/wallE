@@ -43,12 +43,12 @@ export interface DeterministicResult {
 }
 
 const ENTITY_TYPES: EntityType[] = [
-  "stakeholders", "projects", "incentives", "decisions",
+  "stakeholders", "projects", "incentives", "observations", "decisions",
   "requirements", "tensions", "scope", "logs", "drops",
 ];
 
 const PRECISION_TYPES = [
-  "stakeholders", "projects", "incentives", "decisions",
+  "stakeholders", "projects", "incentives", "observations", "decisions",
   "requirements", "tensions", "scope",
 ] as const;
 

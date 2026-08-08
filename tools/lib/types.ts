@@ -11,11 +11,17 @@ export type Disposition =
 export type Influence = "high" | "medium" | "low";
 export type Confidence = "high" | "medium" | "low";
 
+export type Side = "client" | "us" | "partner";
+
 export interface Stakeholder {
   id: string;
   name: string;
   role: string;
   org_unit?: string;
+  /** Whose side they're on. Defaults to client; `us` is excluded from client views. */
+  side?: Side;
+  /** Speaker labels and email addresses this person appears under in drops. */
+  aliases?: string[];
   status: "active" | "departed";
   disposition: Disposition;
   influence: Influence;
@@ -30,6 +36,16 @@ export interface Incentive {
   id: string;
   stakeholder: string;
   kind: "stated" | "inferred";
+  confidence: Confidence;
+  source: string;
+  last_confirmed: string;
+}
+
+export interface Observation {
+  id: string;
+  /** "org", a stakeholder id, or a project id. */
+  about: string;
+  kind: "context" | "relationship" | "process" | "preference" | "constraint";
   confidence: Confidence;
   source: string;
   last_confirmed: string;
@@ -101,7 +117,17 @@ export interface ClientProfile {
 export interface Drop {
   id: string;
   date: string;
-  type: "meeting" | "workshop" | "email" | "slack" | "incident" | "update" | "note";
+  type:
+    | "meeting"
+    | "workshop"
+    | "email"
+    | "slack"
+    | "incident"
+    | "update"
+    | "note"
+    | "transcript";
+  /** Which tool produced it, when it was machine-generated. */
+  source_tool?: "fathom" | "gemini" | "otter" | "zoom" | "manual" | "other";
   title: string;
   participants: string[];
   ingested: string;
@@ -135,6 +161,7 @@ export interface Brain {
   profile: ClientProfile | null;
   stakeholders: Stakeholder[];
   incentives: Incentive[];
+  observations: Observation[];
   tensions: Tension[];
   /** Org-level decisions. */
   decisions: Decision[];

@@ -17,6 +17,7 @@ import type {
   EntityBlock,
   Incentive,
   LogEntry,
+  Observation,
   Project,
   ProjectCharter,
   Requirement,
@@ -181,6 +182,7 @@ export function parseBrain(clientsDir: string, slug: string): Brain {
 
   const stakeholders = asEntities<Stakeholder>(blocksFrom(root, "stakeholders.md", errors));
   const incentives = asEntities<Incentive>(blocksFrom(root, "incentives.md", errors));
+  const observations = asEntities<Observation>(blocksFrom(root, "observations.md", errors));
   const tensions = asEntities<Tension>(blocksFrom(root, "tensions.md", errors));
   const decisions = asEntities<Decision>(blocksFrom(root, "decisions.md", errors));
 
@@ -232,6 +234,7 @@ export function parseBrain(clientsDir: string, slug: string): Brain {
     profile,
     stakeholders,
     incentives,
+    observations,
     tensions,
     decisions,
     drops,
@@ -247,6 +250,7 @@ export function parseAllBlocks(clientsDir: string, slug: string): EntityBlock[] 
   const rels = [
     "stakeholders.md",
     "incentives.md",
+    "observations.md",
     "tensions.md",
     "decisions.md",
   ];

@@ -69,8 +69,9 @@ Two ways backfill arrives, handled differently:
 ```
 clients/<client-slug>/
 ├── client.md            # profile, engagement map, reading order
-├── stakeholders.md      # org-level: people outlive projects
+├── stakeholders.md      # org-level: people outlive projects (client + our side)
 ├── incentives.md        # org-level: stated vs inferred motives
+├── observations.md      # org-level: durable "good to know" context
 ├── tensions.md          # org-level: tensions span projects by design
 ├── decisions.md         # org-level decisions only (governance, standards)
 ├── drops/
@@ -121,6 +122,7 @@ supersessions — never ID edits.
 | Requirement | `req-<slug>` | slug chosen at write time |
 | Tension | `ten-<slug>` | slug chosen at write time |
 | Incentive | `inc-<sh-suffix>-<slug>` e.g. `inc-ada-vance-ship-fast` | slug chosen at write time |
+| Observation | `obs-<slug>` | slug chosen at write time |
 | Scope item | `scp-<slug>` | slug chosen at write time |
 | Finding | the git commit SHA | git is the findings registry |
 
@@ -136,6 +138,8 @@ id: sh-ada-vance
 name: Ada Vance
 role: VP Engineering
 org_unit: Technology            # ? free text
+side: client                    # client | us | partner  (default: client)
+aliases: ["Ada", "Ada V.", "ada.vance@acme.example"]   # transcript labels & emails
 status: active                  # active | departed
 disposition: champion           # champion | supportive | neutral | skeptical | blocker | unknown
 influence: high                 # high | medium | low
@@ -148,6 +152,17 @@ sources: [drop-2024-01-08-kickoff]    # drop ids, grows over time
 
 Prose sections after the yaml block (free-form, recommended headings):
 **Incentive summary**, **History**.
+
+**`side`** keeps the client map honest. Meeting transcripts contain our people
+too; they are recorded with `side: us` (who owns the relationship, who heard
+what) but are **never** counted as client stakeholders — `brain-recall` and
+`brain-onboard` filter them out of stakeholder counts, top-N lists and meeting
+prep. `partner` is for third parties (another vendor, an auditor).
+
+**`aliases`** is how speaker labels resolve. The same person appears as "Ada",
+"Ada Vance", "Ada V. (Acme)" and an email address across different transcripts;
+every label we have seen for them goes here, so the next transcript maps
+cleanly. `tools/speakers.ts` reports which labels in a drop are still unmapped.
 
 ### Incentive (`incentives.md`)
 
@@ -162,6 +177,33 @@ last_confirmed: 2024-01-08
 
 Prose: the incentive itself — what they want, what winning/losing looks like
 for them personally.
+
+### Observation (`observations.md`)
+
+The home for durable "good to know" context that is not a decision, requirement,
+tension or scope item — the texture that makes someone effective in the room.
+
+```yaml
+id: obs-budget-cycle-locks-march
+about: org                      # org | <sh-id> | <proj-id>
+kind: process                   # context | relationship | process | preference | constraint
+confidence: high                # high | medium | low
+source: drop-2024-02-02-requirements
+last_confirmed: 2024-02-02
+```
+
+Prose: the observation itself, in enough detail to act on.
+
+Use it for things like: their budget cycle locks in March; two stakeholders
+worked together at a previous employer; this CFO always opens with run-rate;
+procurement requires three quotes over £50k; the ops team distrusts the tool
+they're mandated to use.
+
+Do **not** use it as a dumping ground. An observation earns its place if it
+would change how a colleague behaves in a meeting six months from now.
+Everything else is chatter and stays in the drop, which is preserved verbatim
+anyway. Never record personal or sensitive detail (health, family, private
+circumstances) or disparaging characterisations of people.
 
 ### Decision (`decisions.md`, org- or project-level)
 
@@ -263,15 +305,23 @@ telling a newcomer which files to read in what sequence.
 ```yaml
 id: drop-2024-01-08-kickoff
 date: 2024-01-08
-type: meeting                   # meeting | workshop | email | slack | incident | update | note
+source_tool: fathom              # ? fathom | gemini | otter | zoom | manual | other
+type: meeting                   # meeting | workshop | email | slack | incident | update | note | transcript
 title: Kickoff — billing replatform
-participants: [Ada Vance, Bo Reyes]   # names verbatim as they appear
+participants: [Ada Vance, Bo Reyes]   # speaker labels VERBATIM as they appear
 ingested: 2026-08-08            # date the drop was ingested
 ```
 
 Body: the raw input, verbatim. Never edited after commit. Drops use YAML
 *frontmatter* (`---` fences at the top of the file), unlike entities which use
 fenced yaml blocks under headings.
+
+`type: transcript` marks raw ASR output (Fathom, Gemini, Otter…) as distinct
+from `meeting` notes a human wrote. It matters downstream: speech-to-text
+mangles names and jargon, so quotes from a transcript are approximate, and any
+auto-generated summary the tool prepends is *derived* content that can be
+wrong. `participants` holds the speaker labels exactly as the tool emitted
+them — resolving those to people is the stakeholder `aliases` field's job.
 
 ## Referential integrity (validator-enforced)
 
@@ -283,6 +333,10 @@ fenced yaml blocks under headings.
 - A scope item's `state` must match the section (`## In`/`## Out`/`## Undecided`)
   it sits under.
 - Every entity's `source`/`sources` drops must exist in `drops/`.
+- An observation's `about` must be `org`, a known stakeholder, or a known
+  project.
+- A stakeholder alias may not be claimed by two different people — ambiguous
+  speaker labels must be disambiguated, not double-assigned.
 - **No entity's event date is later than its source drop's date** (you cannot
   record what has not happened yet). Much *earlier* is fine — that is backfill.
   Something not yet decided is a tension/open question, not a future-dated

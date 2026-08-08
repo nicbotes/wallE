@@ -19,6 +19,7 @@ const TYPE_TO_SECTION: Record<string, EntityType> = {
   stakeholder: "stakeholders",
   project: "projects",
   incentive: "incentives",
+  observation: "observations",
   decision: "decisions",
   requirement: "requirements",
   tension: "tensions",

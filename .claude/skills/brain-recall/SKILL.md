@@ -19,6 +19,14 @@ is to serve it up with provenance.
   `confidence`; never present an inference as a fact.
 - **Surface tensions, don't smooth them.** If the question touches an area
   with an open tension, say so explicitly.
+- **Client-only by default.** Stakeholder counts, "who's who" and meeting prep
+  cover `side: client` (and `partner` where relevant). People marked `side: us`
+  are our own team — they exist so speaker labels resolve, not to pad the
+  client map. Mention them only when the question is about our side.
+- **Use observations.** `observations.md` holds the org-navigation context —
+  how their budget cycle works, who has history with whom, what a given person
+  expects in a room. Fold the relevant ones into any answer where they'd change
+  how the person acts; they are often the most immediately useful thing there.
 - **Answer in event time.** Chronology comes from entity dates
   (`npx tsx tools/timeline.ts <slug>`), not from commit order. Backstory we
   learned late is ordinary context — a 2022 decision recounted to us last month
@@ -50,4 +58,6 @@ The consultant's edge, compressed:
 3. Requirements they own and each one's status (never walk in not knowing).
 4. Open tensions they're a party to — and who's on the other side.
 5. Decisions from the last 90 days that affect them (especially reversals).
-6. Landmines: stale facts about them, gaps we should close in this meeting.
+6. **How to handle the room** — observations about them and the org: what they
+   open with, what evidence persuades them, process constraints to respect.
+7. Landmines: stale facts about them, gaps we should close in this meeting.

@@ -9,10 +9,15 @@ each stakeholder actually wants, which decisions were made (and reversed),
 where scope moved, where the tensions are. That map usually walks out the door
 with the person. This repo captures it instead:
 
-- **Event log** — every raw input (meeting transcript, email, incident report,
-  dictated notes) is saved verbatim and immutably under `clients/<slug>/drops/`.
+- **Event log** — every raw input (Fathom/Gemini transcript, email, incident
+  report, dictated notes) is saved verbatim and immutably under
+  `clients/<slug>/drops/`.
 - **Projections** — agent skills extract *attributed findings* into curated
-  Markdown (stakeholders, incentives, requirements, decisions, tensions, scope).
+  Markdown (stakeholders, incentives, observations, requirements, decisions,
+  tensions, scope). An hour of transcript is ~9,000 words and typically yields
+  one decision plus a handful of durable notes — so the curated view stays
+  small enough to read while the log grows without bound. `tools/stats.ts`
+  measures the ratio for a real client.
 - **Changelog** — every finding is its own git commit with machine-parseable
   trailers. `git log` *is* the story of how understanding evolved; diffs show
   changes in thinking, not just changes in text.
@@ -47,8 +52,13 @@ from a fresh clone through verification to the first committed eval baseline.
 Open this repo in Claude Code. The skills load automatically:
 
 1. Mention a new client → **brain-init** scaffolds `clients/<slug>/`.
-2. Paste a transcript, email, or just talk through a meeting → **brain-ingest**
-   saves the raw drop, extracts findings, commits each one.
+2. Paste a Fathom/Gemini transcript, an email, or just talk through a meeting →
+   **brain-ingest** saves the raw drop, extracts findings, commits each one.
+   Speaker labels resolve to people via stakeholder `aliases`
+   (`tools/speakers.ts` flags any it can't map); your own team is recorded
+   `side: us` and kept out of the client map; and the "good to know" a meeting
+   throws off — budget rhythms, who has history with whom, what persuades a
+   given exec — lands in `observations.md` instead of being lost as chatter.
 3. Ask "what's the lay of the land at Acme?" → **brain-recall**.
 4. Ask "what changed since March?" → **brain-diff**.
 5. "Read me into this client" → **brain-onboard** (the 30-minute newcomer path).
@@ -108,7 +118,7 @@ CLAUDE.md            operating instructions for the agent
 docs/PLAN.md         the full build plan & design rationale
 schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) · templates/
 .claude/skills/      brain-init · brain-ingest · brain-recall · brain-diff · brain-audit · brain-onboard
-tools/               validate · query-log · timeline · staleness · search · commit-finding.sh
+tools/               validate · query-log · timeline · staleness · search · speakers · stats · commit-finding.sh
 clients/             one brain per client (ships empty)
 eval/                corpus · goldens · harness · committed score reports
 ```

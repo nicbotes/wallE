@@ -16,6 +16,7 @@ export interface DropSpec {
   type: string;
   title: string;
   text: string;
+  sourceTool?: string;
 }
 
 export interface RunUsage {
@@ -37,6 +38,7 @@ export async function ingestDrop(
     `client "${clientName}".\n\n` +
     `Drop date: ${drop.date}\n` +
     `Drop type: ${drop.type}\n` +
+    (drop.sourceTool ? `Source tool: ${drop.sourceTool}\n` : "") +
     `Suggested title: ${drop.title}\n\n` +
     `--- RAW DROP CONTENT (save verbatim) ---\n${drop.text}`;
 

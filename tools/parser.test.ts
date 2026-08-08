@@ -63,9 +63,34 @@ describe("parseBrain on the testco fixture", () => {
 
   it("reads profile, stakeholders, incentives, tensions", () => {
     expect(brain.profile?.id).toBe("testco");
-    expect(brain.stakeholders.map((s) => s.id).sort()).toEqual(["sh-ada-vance", "sh-bo-reyes"]);
+    expect(brain.stakeholders.map((s) => s.id).sort()).toEqual([
+      "sh-ada-vance", "sh-bo-reyes", "sh-jules-marek",
+    ]);
     expect(brain.incentives[0]!.kind).toBe("inferred");
     expect(brain.tensions[0]!.resolved_by).toBe("dec-20240301-phased-rollout");
+  });
+
+  it("reads stakeholder side and aliases", () => {
+    const ada = brain.stakeholders.find((s) => s.id === "sh-ada-vance")!;
+    expect(ada.side).toBe("client");
+    expect(ada.aliases).toContain("Ada");
+    const ours = brain.stakeholders.find((s) => s.id === "sh-jules-marek")!;
+    expect(ours.side).toBe("us");
+  });
+
+  it("reads observations, including org-scoped ones", () => {
+    expect(brain.observations.map((o) => o.id).sort()).toEqual([
+      "obs-ada-opens-with-roadmap", "obs-budget-cycle-locks-march",
+    ]);
+    const org = brain.observations.find((o) => o.about === "org")!;
+    expect(org.kind).toBe("process");
+    expect(org.confidence).toBe("high");
+  });
+
+  it("reads a transcript drop with its source tool", () => {
+    const t = brain.drops.find((d) => d.id === "drop-2024-03-01-review")!;
+    expect(t.type).toBe("transcript");
+    expect(t.source_tool).toBe("fathom");
   });
 
   it("reads drops with paths", () => {

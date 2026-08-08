@@ -37,6 +37,13 @@ Reports first; fixes only with the user's approval, and then only via
      whose pre-history predates the brain. These aren't defects — they're
      the questions worth asking the next person who remembers. List them as
      "backfill worth chasing".
+   - **Unmapped speakers**: `npx tsx tools/speakers.ts <slug>` across all drops
+     — labels that never resolved to anyone mean transcript content was
+     attributed to nobody. Also flag stakeholders with no `aliases` if the
+     client has transcript drops: the next import will fail to match them.
+   - **Observation rot**: entries that no longer describe how the org works
+     (a process that changed, a person who left). Stale observations mislead
+     more than missing ones.
 
 4. **Report**, grouped: `MECHANICAL` (validator errors) / `STALE` /
    `GAPS` (unattributed) / `JUDGMENT`. Each item: file, entity id, what's

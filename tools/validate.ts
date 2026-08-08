@@ -15,7 +15,12 @@ import type { Brain } from "./lib/types.js";
 const DISPOSITIONS = ["champion", "supportive", "neutral", "skeptical", "blocker", "unknown"];
 const INFLUENCES = ["high", "medium", "low"];
 const CONFIDENCES = ["high", "medium", "low"];
-const DROP_TYPES = ["meeting", "workshop", "email", "slack", "incident", "update", "note"];
+const DROP_TYPES = [
+  "meeting", "workshop", "email", "slack", "incident", "update", "note", "transcript",
+];
+const SOURCE_TOOLS = ["fathom", "gemini", "otter", "zoom", "manual", "other"];
+const SIDES = ["client", "us", "partner"];
+const OBSERVATION_KINDS = ["context", "relationship", "process", "preference", "constraint"];
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /** YAML may hand us a Date or a string; normalise to YYYY-MM-DD. */
@@ -107,6 +112,7 @@ export function validateBrain(brain: Brain): ValidationResult {
     if (!d.id?.startsWith("drop-")) errors.push(`${where}: id must start with drop-`);
     date(d.date, where, "date");
     oneOf(d.type, DROP_TYPES, where, "type");
+    if (d.source_tool !== undefined) oneOf(d.source_tool, SOURCE_TOOLS, where, "source_tool");
     const expectedFile = `drops/${String(d.id).replace(/^drop-/, "")}.md`;
     if (d.id && d.path !== expectedFile)
       errors.push(`${where}: filename does not match id (expected ${expectedFile})`);
@@ -126,6 +132,9 @@ export function validateBrain(brain: Brain): ValidationResult {
     if (!s.id?.startsWith("sh-")) errors.push(`${where}: id must start with sh-`);
     if (!s.name) errors.push(`${where}: missing name`);
     if (!s.role) errors.push(`${where}: missing role`);
+    if (s.side !== undefined) oneOf(s.side, SIDES, where, "side");
+    if (s.aliases !== undefined && !Array.isArray(s.aliases))
+      errors.push(`${where}: aliases must be a list`);
     oneOf(s.status, ["active", "departed"], where, "status");
     oneOf(s.disposition, DISPOSITIONS, where, "disposition");
     oneOf(s.influence, INFLUENCES, where, "influence");
@@ -147,6 +156,33 @@ export function validateBrain(brain: Brain): ValidationResult {
     oneOf(i.confidence, CONFIDENCES, where, "confidence");
     refDrop(i.source, where, "source");
     date(i.last_confirmed, where, "last_confirmed");
+  }
+
+  // An alias may not be claimed by two people — ambiguous speaker labels must
+  // be disambiguated, not double-assigned.
+  const aliasOwner = new Map<string, string>();
+  for (const s of brain.stakeholders) {
+    for (const a of s.aliases ?? []) {
+      const key = String(a).trim().toLowerCase();
+      if (!key) continue;
+      const owner = aliasOwner.get(key);
+      if (owner && owner !== s.id)
+        errors.push(`stakeholders.md: alias "${a}" is claimed by both ${owner} and ${s.id}`);
+      else aliasOwner.set(key, s.id);
+    }
+  }
+
+  // --- observations -------------------------------------------------------------
+  for (const o of brain.observations) {
+    const where = `observations.md (${o.id})`;
+    if (!o.id?.startsWith("obs-")) errors.push(`${where}: id must start with obs-`);
+    if (!o.about) errors.push(`${where}: missing about`);
+    else if (o.about !== "org" && !shIds.has(o.about) && !projIds.has(o.about))
+      errors.push(`${where}: about "${o.about}" is not "org", a known stakeholder, or a project`);
+    oneOf(o.kind, OBSERVATION_KINDS, where, "kind");
+    oneOf(o.confidence, CONFIDENCES, where, "confidence");
+    refDrop(o.source, where, "source");
+    date(o.last_confirmed, where, "last_confirmed");
   }
 
   // --- decisions (org + project) ----------------------------------------------
@@ -260,6 +296,7 @@ export function validateBrain(brain: Brain): ValidationResult {
   const allIds = [
     ...brain.stakeholders.map((x) => x.id),
     ...brain.incentives.map((x) => x.id),
+    ...brain.observations.map((x) => x.id),
     ...brain.tensions.map((x) => x.id),
     ...decisionsEverywhere.map(({ d }) => d.id),
     ...brain.projects.flatMap((p) => [

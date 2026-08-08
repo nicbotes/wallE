@@ -57,6 +57,7 @@ export interface Golden {
     stakeholders?: Assertion[];
     projects?: Assertion[];
     incentives?: Assertion[];
+    observations?: Assertion[];
     decisions?: Assertion[];
     requirements?: Assertion[];
     tensions?: Assertion[];
@@ -69,7 +70,7 @@ export interface Golden {
 }
 
 export type EntityType =
-  | "stakeholders" | "projects" | "incentives" | "decisions"
+  | "stakeholders" | "projects" | "incentives" | "observations" | "decisions"
   | "requirements" | "tensions" | "scope" | "logs" | "drops";
 
 export function loadGolden(corpusDir: string, seq: number): Golden {
@@ -92,6 +93,7 @@ export function loadAllowlist(corpusDir: string): Record<string, AllowlistEntry[
 const TYPE_FILE: Record<string, string> = {
   stakeholders: "stakeholders.md",
   incentives: "incentives.md",
+  observations: "observations.md",
   decisions: "decisions.md",
   requirements: "requirements.md",
   tensions: "tensions.md",

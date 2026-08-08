@@ -69,6 +69,17 @@ describe("validateBrain on the poisoned fixture", () => {
     expectError("ingested 2024-03-01 is earlier than the drop date 2024-03-15");
   });
 
+  it("catches a bad side and a duplicated speaker alias", () => {
+    expectError('side "theirs"');
+    expectError('alias "Cy" is claimed by both');
+  });
+
+  it("catches observation enum and reference violations", () => {
+    expectError('about "sh-does-not-exist"');
+    expectError('kind "rumour"');
+    expectError('confidence "certain"');
+  });
+
   it("catches scope section/state mismatch and out-of-section items", () => {
     expectError('state "out" but sits under section "## in"');
     expect(all).toMatch(/scp-homeless.*outside the In\/Out\/Undecided|sits outside/);

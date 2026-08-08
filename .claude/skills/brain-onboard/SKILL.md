@@ -14,10 +14,12 @@ built so a newcomer can operate credibly by the end of it.
 1. **The org in five sentences** — from `client.md`: what they are, why
    they're a client, the engagement shape.
 
-2. **The five people who matter** — by influence: name, role, disposition +
-   one line on what they *actually* want (incentives, flag inferred vs
-   stated). Include reporting lines where they explain behaviour. Departed
-   people who still cast a shadow (their decisions live on) get one line.
+2. **The five people who matter** — by influence, **client-side only**
+   (`side: client`/`partner`; our own `side: us` people belong in the
+   engagement note, not the client map): name, role, disposition + one line on
+   what they *actually* want (incentives, flag inferred vs stated). Include
+   reporting lines where they explain behaviour. Departed people who still cast
+   a shadow (their decisions live on) get one line.
 
 3. **Projects** — each: goal, status, phase, what's in/out/undecided in one
    breath.
@@ -35,6 +37,11 @@ built so a newcomer can operate credibly by the end of it.
 
 5. **Live tensions** — every open one: who vs who, about what, what it
    blocks. These are the rooms the newcomer will walk into.
+
+5b. **How this org actually works** — the observations: budget and procurement
+   rhythms, standing constraints, personal histories between stakeholders, what
+   each key person expects in a meeting. This is the section that saves a
+   newcomer six months of learning things the hard way.
 
 6. **Last 90 days** — a compressed brain-diff so they know the current
    temperature.

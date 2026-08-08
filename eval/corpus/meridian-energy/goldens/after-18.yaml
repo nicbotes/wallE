@@ -1,0 +1,84 @@
+# Cumulative expected state after drop 18 (raw Fathom transcript).
+#
+# The transcript test. ~36 minutes of talk yields ONE decision, one scope move,
+# two new people (one of them ours), and three observations. Everything else —
+# holidays, the camera, crosstalk, the coffee machine — must stay out.
+drop: drop-2026-02-06-portal-phase2-transcript
+deterministic:
+  stakeholders:
+    # New client-side engineer, first seen in this transcript.
+    - match: { id: sh-ravi-chandrasekaran }
+      expect: { status: active, side: client }
+    # OUR consultant. Recorded so speaker labels resolve — must be side: us,
+    # never counted as a client stakeholder.
+    - match: { id: sh-rachel-mendes }
+      expect: { status: active, side: us }
+    # Existing people, unchanged by this drop.
+    - match: { id: sh-aisha-bell }
+      expect: { status: active, disposition: champion, side: client }
+    - match: { id: sh-tom-nagel }
+      expect: { status: active, disposition: supportive }
+    - match: { id: sh-marcus-webb }
+      expect: { status: active }
+    - match: { id: sh-priya-sharma }
+      expect: { status: departed }
+  decisions:
+    # Tom approves payment-history export for phase 2, in the meeting.
+    - match: { file: customer-portal, date: 2026-02-06, keywords_any: [export, payment] }
+      expect:
+        status: active
+        decided_by: { includes: [sh-tom-nagel] }
+        source: drop-2026-02-06-portal-phase2-transcript
+    - match: { file: customer-portal, date: 2025-07-02 }
+      expect: { status: active }
+  scope:
+    # Was undecided since drop 16; this decision moves it in.
+    - match: { file: customer-portal, keywords_any: [export, payment] }
+      expect: { state: in, decided_by: { includes: [sh-tom-nagel] } }
+    # Live chat was explicitly NOT reopened — must stay undecided/absent, and
+    # certainly not move in.
+    - match: { file: customer-portal, keywords_any: [account, self-service] }
+      expect: { state: in }
+  observations:
+    # The org's budget rhythm — stated by Tom, corroborated by Aisha.
+    - match: { keywords_any: [budget, march, financial year, finance committee] }
+      expect: { about: org, confidence: { one_of: [high, medium] } }
+    # How to pitch to the CFO — about a person, not the org.
+    - match: { keywords_any: [run rate, run-rate, pitch, persuad] }
+      expect: { about: sh-marcus-webb }
+    # Prior working relationship that eases cross-team handoffs.
+    - match: { keywords_any: [northgate, previous employer, worked together] }
+      expect: { kind: relationship }
+  requirements:
+    - match: { file: customer-portal, keywords_any: [billing, balance] }
+      expect: { stated_by: sh-aisha-bell }
+  projects:
+    - match: { id: proj-customer-portal }
+      expect: { status: active }
+    - match: { id: proj-billing-replatform }
+      expect: { status: delivered }
+  tensions:
+    - match: { keywords_any: [capacity, shared] }
+      expect: { status: open }
+  drops:
+    - match: { id: drop-2026-02-06-portal-phase2-transcript }
+  commit_protocol:
+    source: drop-2026-02-06-portal-phase2-transcript
+    min_findings:
+      drop: 1
+      stakeholder-new: 2
+      decision-new: 1
+      scope-move: 1
+      observation-new: 3
+judge:
+  - target: { type: stakeholder, id: sh-rachel-mendes }
+    rubric: >-
+      The entry records Rachel Mendes as being on OUR side (side: us), not a
+      Meridian employee — the transcript has her saying "Rachel here from our
+      side". It must not assign her a client role or disposition as though she
+      were a client stakeholder.
+  - target: { type: observation, keywords_any: [run rate, run-rate, pitch, persuad] }
+    rubric: >-
+      The observation captures the actionable point — that Marcus is persuaded
+      by annual run-rate figures and disengages from strategic-vision framing —
+      rather than merely noting that his preferences were discussed.

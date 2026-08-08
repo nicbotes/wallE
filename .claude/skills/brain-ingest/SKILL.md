@@ -54,6 +54,35 @@ tools/commit-finding.sh -c <slug> -t drop -e <drop-id> -s <drop-id> \
     -m "<type>: <short title>" clients/<slug>/drops/<file>
 ```
 
+### 3b. Raw transcripts (Fathom, Gemini, Otter…)
+Skip if the drop isn't machine-transcribed. Set `type: transcript` and
+`source_tool:`, and keep `participants` as the **speaker labels verbatim**.
+
+- **Map every speaker before extracting anything:**
+  ```
+  npx tsx tools/speakers.ts <slug> <drop-id>
+  ```
+  It lists each label with its share of the talking and whether it already
+  resolves via a stakeholder's `name`/`aliases`. Resolve *all* of them:
+  - Known person under a new label ("Bo", "bo@…", "Bo R. (Acme)") → add the
+    label to their `aliases` (`stakeholder-update`). This is what makes the
+    next transcript map cleanly.
+  - New client person → `stakeholder-new` as usual.
+  - **One of ours** → `stakeholder-new` with `side: us`. Record them so labels
+    resolve, but they are never client stakeholders and must not pad the map.
+  - A third party (another vendor, an auditor) → `side: partner`.
+  - A room, a phone, "Unknown Speaker" → not a person; don't create anything.
+- **The auto-summary is derived, and can be wrong.** Fathom/Gemini exports
+  often lead with a summary and action items. Preserve them (the drop is
+  verbatim) but **extract from the transcript body**; treat the summary as a
+  hint about where to look, never as a source of fact.
+- **Expect ASR damage.** Names, product names and jargon get mangled. Resolve a
+  garbled name from role and context if you safely can; otherwise log an open
+  question rather than inventing a person. Quotes drawn from a transcript are
+  approximate — say "per the transcript" rather than presenting them as exact.
+- **Attribution is now easy — use it.** Speaker labels tell you exactly who
+  said what. There is far less excuse for an `unattributed` requirement here.
+
 ### 4. Read current state
 Read `stakeholders.md` (always) plus every file the drop plausibly touches
 (the project's files if a project is referenced, `tensions.md`, `incentives.md`,
@@ -78,9 +107,24 @@ While drafting:
 - **Contradictions between stakeholders** in this drop = `tension-opened`.
 - **Re-confirmations** (existing fact restated, nothing changed) go in one
   batch: collect entity IDs for a single `confirm` commit at the end.
-- **Noise stays out.** Small talk, tangents, and possibilities explicitly *not*
-  decided are not findings. When in doubt whether something is a finding, it
-  probably isn't — but say so in your narration (step 8).
+- **Most of a transcript is discussion, not findings — and some of it is still
+  worth keeping.** An hour of talk might yield one decision. It will usually
+  also surface *durable context*: their budget cycle locks in March,
+  procurement needs three quotes over £50k, two people worked together at a
+  previous employer, this CFO always opens with run-rate. That is
+  `observation-new` — the test is **would this change how a colleague behaves
+  in a meeting six months from now?** If yes, record it (`about` a person, a
+  project, or `org`; mark confidence). If no, it stays in the drop, which
+  keeps everything verbatim anyway.
+- **Noise stays out.** Small talk, scheduling, tangents, and possibilities
+  explicitly *not* decided are not findings and not observations. When in doubt
+  whether something is a finding, it probably isn't — but say so in your
+  narration (step 8) so the judgment is visible.
+- **Restraint about people.** Never record personal or sensitive detail
+  (health, family, private circumstances) that happens to be caught on a
+  transcript, and never record disparaging characterisations as facts. If
+  someone's frustration matters professionally, record the professional
+  substance — a tension, a disposition change — not the venting.
 - **Backstory is a finding, dated when it happened.** When a drop explains
   history — an old decision nobody told us about, why someone has been wary
   since a failed project, a requirement's real origin — record it with its
@@ -100,7 +144,8 @@ While drafting:
   decided X" does not.
 
 Order the ledger by dependency: stakeholders → projects → incentives /
-requirements / decisions / scope → tensions → log entries → confirm.
+observations / requirements / decisions / scope → tensions → log entries →
+confirm.
 
 ### 6. Apply, one finding at a time
 For each ledger line: make the edit (match the template headings and yaml

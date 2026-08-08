@@ -135,8 +135,8 @@ describe("goldens", () => {
 
   it("golden matchers use only known keys and entity types", () => {
     const KNOWN_TYPES = new Set([
-      "stakeholders", "projects", "incentives", "decisions", "requirements",
-      "tensions", "scope", "logs", "drops", "commit_protocol",
+      "stakeholders", "projects", "incentives", "observations", "decisions",
+      "requirements", "tensions", "scope", "logs", "drops", "commit_protocol",
     ]);
     const KNOWN_MATCH_KEYS = new Set(["id", "file", "date", "keywords_any", "project", "kind"]);
     for (const { file } of goldenFiles) {
@@ -181,6 +181,7 @@ describe("leakage lint", () => {
       // proper nouns
       "meridian", "priya", "sharma", "marcus", "webb", "okafor",
       "nagel", "aisha", "hermes", "billflow",
+      "chandrasekaran", "mendes", "northgate",
       // storyline structure — would hint the expected extractions
       "billing-replatform", "customer-portal", "dual-run", "selfhost",
       "managed-cloud", "mobile-payments", "postgres",

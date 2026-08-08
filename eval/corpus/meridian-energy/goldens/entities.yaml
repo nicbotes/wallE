@@ -18,6 +18,9 @@ stakeholders:
   - { from: 1,  match: { id: sh-dana-okafor } }
   - { from: 8,  match: { id: sh-tom-nagel } }
   - { from: 11, match: { id: sh-aisha-bell } }
+  # Drop 18 (transcript): a client engineer and one of OUR people (side: us).
+  - { from: 18, match: { id: sh-ravi-chandrasekaran } }
+  - { from: 18, match: { id: sh-rachel-mendes } }
 
 projects:
   - { from: 1,  match: { id: proj-billing-replatform } }
@@ -43,6 +46,16 @@ decisions:
   - { from: 15, match: { file: billing-replatform, date: 2025-09-10 } }   # phased cutover
   # Backfilled in drop 17: event date 2022, first legitimately present at 17.
   - { from: 17, match: { file: decisions.md, date: 2022-02-03 } }         # board security-review gate
+  - { from: 18, match: { file: customer-portal, date: 2026-02-06 } }      # approve payment-history export
+
+observations:
+  # Drop 17 backstory may also be recorded as observations rather than prose.
+  - { from: 17, match: { keywords_any: [2021, crm, programme, failure] }, note: optional }
+  # Drop 18 (transcript) — the "good to know" the meeting actually yielded.
+  - { from: 18, match: { keywords_any: [budget, march, financial year, finance committee] } }
+  - { from: 18, match: { keywords_any: [run rate, run-rate, pitch, persuad] } }
+  - { from: 18, match: { keywords_any: [northgate, previous employer, worked together] } }
+  - { from: 18, match: { keywords_any: [chat, phase] }, note: optional }   # live chat deferred, not reopened
 
 requirements:
   - { from: 2,  match: { file: billing-replatform, keywords_any: [dual] } }

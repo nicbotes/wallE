@@ -24,3 +24,6 @@ drops:
   # Backfill: a current meeting that recounts 2021/2022 history. The drop is
   # dated when the meeting happened; the entities it yields carry older dates.
   - { seq: 17, file: drops/17-handover-backstory.md,     id: drop-2026-01-14-handover-backstory,     date: 2026-01-14, type: meeting,  title: "Handover — account history" }
+  # Raw ASR: speaker labels, timestamps, an auto-summary header, crosstalk, and
+  # both sides in the room. ~36 minutes of talk for one decision.
+  - { seq: 18, file: drops/18-portal-phase2-transcript.md, id: drop-2026-02-06-portal-phase2-transcript, date: 2026-02-06, type: transcript, source_tool: fathom, title: "Customer portal — phase 2 planning" }

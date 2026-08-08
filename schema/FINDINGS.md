@@ -15,6 +15,8 @@ understanding; these commits are its records.
 | `stakeholder-update` | Any field change: role, disposition, reports_to, departure |
 | `incentive-new` | New stated or inferred motive |
 | `incentive-update` | Kind/confidence change (e.g. inferred → confirmed stated) |
+| `observation-new` | Durable "good to know" context recorded |
+| `observation-update` | Observation revised, re-scoped or confidence changed |
 | `requirement-new` | New requirement |
 | `requirement-update` | Status/priority/attribution change |
 | `decision-new` | Decision with no predecessor |
