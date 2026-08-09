@@ -122,6 +122,7 @@ projection you can rebuild from `drops/`:
 ```
 CLAUDE.md            operating instructions for the agent
 docs/PLAN.md         the full build plan & design rationale
+docs/TODO.md         backlog — led by validating all of this against real transcripts
 schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) · templates/
 .claude/skills/      brain-init · brain-ingest · brain-recall · brain-diff · brain-audit · brain-onboard
 domains/             domain packs — the thin controlled vocabulary for topics

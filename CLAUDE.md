@@ -56,5 +56,7 @@ capabilities.
 - `npx vitest run --project unit` — fast deterministic tests.
 - `npm run eval -- --smoke` — cheap end-to-end extraction check (needs
   `ANTHROPIC_API_KEY`).
+- `docs/TODO.md` is the backlog. Nothing here has been validated against real
+  client transcripts yet — read it before trusting the tuning.
 - Keep the capability layer (`.claude/`, `schema/`, `tools/`) corpus-agnostic:
   no Meridian Energy names outside `eval/` (the leakage lint enforces this).
