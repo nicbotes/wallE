@@ -136,6 +136,17 @@ While drafting:
   missing topic costs a little recall, a wrong one makes a later search look
   complete when it isn't. Recurring bare slugs are how the spine grows
   (`brain-domain`), so inventing a sensible one is useful, not a failure.
+- **Write decision rationale neutrally.** Record *what* was decided and the
+  reasons given — not our characterisation of who prevailed. "Reversal after
+  Bo's cost gates won the argument" and "revised following a review of
+  run-rate costs" carry the same information; only the second survives being
+  read aloud to the client. This is cheaper to get right at write time than to
+  sanitise later, and it is the difference between a decision log that can be
+  shared and one that can't. The same applies to tension `positions`: state
+  each side's reasoning, not who was being difficult.
+  (`tools/client-view.ts` flags the ones that slip through — treat a flag as a
+  sign the rationale should have been written better, not as a filter doing
+  its job.)
 - **Restraint about people.** Never record personal or sensitive detail
   (health, family, private circumstances) that happens to be caught on a
   transcript, and never record disparaging characterisations as facts. If

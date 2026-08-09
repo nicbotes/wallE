@@ -120,7 +120,7 @@ where taking more would actually help.
 
 | Body of work | What we use | What we skipped | Would more help? |
 | --- | --- | --- | --- |
-| **IBIS** (Rittel & Kunz, 1970) | The *shape*: a tension is an Issue held open until something resolves it, with `resolved_by` pointing at the resolving decision. | **Positions and Arguments.** A tension records `between: [a, b]` plus prose — who argued *what* is unstructured. | **Yes — the biggest single win available.** Structured positions turn "these two disagreed" into "A argued X because Y; B argued Z; the decision chose…", which is exactly what "why is it this way" needs. See [`docs/TODO.md`](docs/TODO.md) 3.3. |
+| **IBIS** (Rittel & Kunz, 1970) | Issues *and* Positions: a tension is an Issue held open until something resolves it (`resolved_by`), and `positions` records what each party argued. | **Arguments** — the evidence layer beneath a position. | Not yet. Positions carry most of the value; adding Arguments is speculative until positions prove insufficient in practice. |
 | **SKOS** (W3C) | `label` / `alt:` on spine terms are `prefLabel` / `altLabel`. That pair does most of the work — it's how "cover", "coverage" and "benefit" collapse to one term. | `broader`/`narrower` (facets are deliberately flat), `related`, URIs, `exactMatch`. | Partly. Per-term `definition` is cheap and would disambiguate for the tagging agent. Shallow `broader` only once a facet outgrows ~15 terms. `exactMatch` to ACORD only if integrating with insurer systems. |
 | **ADR** (Nygard, 2011) | `decisions.md` with supersession chains already *is* an architecture-decision log. | Nothing meaningful. | No — we have the useful part. Naming it just makes the convention recognisable. |
 | **PROV-O** (W3C) | The model: `source`/`sources` and attribution map onto `wasDerivedFrom` / `wasAttributedTo`. | The actual RDF vocabulary and URIs. | Only if federating or exporting provenance to another system. |
@@ -157,6 +157,22 @@ many clients, as a reconciliation aid — proposing that `billing-run`,
 `billing-runs` and `the-billing-run` are one term. That's the job
 `tools/spine.ts candidates` does crudely by exact match today, and the natural
 upgrade once there are enough clients for clustering to mean anything.
+
+## Seeing the story
+
+`tools/timeline.ts` reads a brain in **event order** — when things happened, not
+when we learned them — and can render it as a self-contained page (inline CSS,
+no script, no external references, so it survives being emailed):
+
+```bash
+npx tsx tools/timeline.ts acme-utilities --html timeline.html
+npx tsx tools/timeline.ts acme-utilities --topic component:rating   # one thread
+```
+
+Supersessions are drawn as explicit replacements and backfilled entries carry a
+dashed marker with when we learned them, so both clocks are visible at a glance.
+It is an **internal** view — use `tools/client-view.ts` for anything a client
+sees.
 
 ## Install (macOS + Linux)
 
