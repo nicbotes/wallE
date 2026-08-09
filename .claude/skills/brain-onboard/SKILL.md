@@ -14,9 +14,18 @@ built so a newcomer can operate credibly by the end of it.
 1. **The org in five sentences** — from `client.md`: what they are, why
    they're a client, the engagement shape.
 
+1b. **Who else is in the chain** — if the brain has an `orgs.md`, this comes
+   before the people, because it is what makes the people make sense. Run
+   `npx tsx tools/org-chart.ts <slug>` and narrate it: who we contract with,
+   who sits above them (and what they can therefore veto), who sits below and
+   is served through them, and which organisations are rivals to each other.
+   A newcomer who learns the names before the structure will spend weeks
+   mis-reading meetings.
+
 2. **The five people who matter** — by influence, **client-side only**
    (`side: client`/`partner`; our own `side: us` people belong in the
-   engagement note, not the client map): name, role, disposition + one line on
+   engagement note, not the client map): name, **organisation**, role,
+   disposition + one line on
    what they *actually* want (incentives, flag inferred vs stated). Include
    reporting lines where they explain behaviour. Departed people who still cast
    a shadow (their decisions live on) get one line.
@@ -30,7 +39,10 @@ built so a newcomer can operate credibly by the end of it.
    changed the economics — decided jointly by X and Y"). Use
    `npx tsx tools/query-log.ts --client <slug> --type decision-superseded`.
    Build the chronology from **event dates** — `npx tsx tools/timeline.ts
-   <slug>` — never commit order. History we only learned recently is still
+   <slug>` — never commit order. Where a decision carries an `authority`, say
+   whose call it was: in a chain, "the capacity provider required it" and "our
+   counterparty chose it" are different facts with different consequences.
+   History we only learned recently is still
    history: place it where it happened. Where a fact was reconstructed long
    after the event, say so once ("we only learned this in March") — a newcomer
    should know which parts of the story we watched and which we were told.

@@ -70,7 +70,9 @@ Skip if the drop isn't machine-transcribed. Set `type: transcript` and
   - New client person → `stakeholder-new` as usual.
   - **One of ours** → `stakeholder-new` with `side: us`. Record them so labels
     resolve, but they are never client stakeholders and must not pad the map.
-  - A third party (another vendor, an auditor) → `side: partner`.
+  - A third party (another vendor, an auditor) → `side: partner`. If the brain
+    tracks a value chain, set their `org` too — "which company are they from"
+    is what makes a speaker list legible six months later.
   - A room, a phone, "Unknown Speaker" → not a person; don't create anything.
 - **The auto-summary is derived, and can be wrong.** Fathom/Gemini exports
   often lead with a summary and action items. Preserve them (the drop is
@@ -98,6 +100,21 @@ While drafting:
   guess — record it as a `tension-opened` (kind: open question) instead.
 - **New people** get deterministic IDs: `sh-<given>-<family>` from the name as
   written; on collision append `-2`.
+- **In a multi-organisation engagement, place every person.** If the brain has
+  an `orgs.md`, a new stakeholder needs `org: <org-id>` — which company in the
+  chain they belong to, distinct from `org_unit` (their team inside it). Ask if
+  the drop doesn't say; in a chain it is the single most useful fact about
+  someone, and audience-scoped output withholds anyone unplaced. A company you
+  haven't seen before is an `org-new` finding, committed **before** the people
+  who reference it: give it a structural `tier` (`us` | `principal` |
+  `upstream` | `downstream` | `peer`), the domain's own word for `role`, and a
+  `parent` if they sit under someone. An org leaving the chain is
+  `org-update` (status → former), never a deletion.
+- **Record whose call a decision was, when it isn't obvious.** `authority` is
+  the organisation that had the right to decide, which in a chain is often not
+  the people in the room — the partner sets the launch date, the capacity
+  provider can veto it on regulatory grounds. Set it when the drop makes it
+  clear; leave it off rather than guessing.
 - **Departures** are `stakeholder-update` (status → departed), never deletion.
 - **A reversed decision** is ONE finding (`decision-superseded`): add the new
   entry AND stamp the old one (`status: superseded`, `superseded_by`) in the
@@ -170,7 +187,7 @@ While drafting:
   claim ("that's still our position") re-confirms a fact; "back then we
   decided X" does not.
 
-Order the ledger by dependency: stakeholders → projects → incentives /
+Order the ledger by dependency: organisations → stakeholders → projects → incentives /
 observations / requirements / decisions / scope → tensions → log entries →
 confirm.
 

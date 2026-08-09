@@ -41,6 +41,12 @@ Reports first; fixes only with the user's approval, and then only via
      — labels that never resolved to anyone mean transcript content was
      attributed to nobody. Also flag stakeholders with no `aliases` if the
      client has transcript drops: the next import will fail to match them.
+   - **People unplaced in the chain**: if the brain has an `orgs.md`, run
+     `npx tsx tools/org-chart.ts <slug>` and look at the "not yet placed"
+     list. Anyone without a resolving `org` is withheld from every
+     audience-scoped brief, so a missing `org` quietly shrinks what a client
+     is shown. Same for decisions with no `authority` where the answer is
+     actually known.
    - **Observation rot**: entries that no longer describe how the org works
      (a process that changed, a person who left). Stale observations mislead
      more than missing ones.

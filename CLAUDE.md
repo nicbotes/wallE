@@ -14,7 +14,7 @@ capabilities.
 - `domains/` — domain packs: the thin controlled vocabulary ("spine") topics
   are tagged against. Capability, never client content. See `domains/README.md`.
 - `tools/` — deterministic helpers (validate, query-log, timeline, staleness,
-  search, speakers, stats, spine, client-view, commit-finding.sh). Run TypeScript tools with
+  search, speakers, stats, spine, client-view, org-chart, commit-finding.sh). Run TypeScript tools with
   `npx tsx tools/<name>.ts`.
 - `eval/` — synthetic corpus + goldens + harness that grade the extraction
   skills. **Never read `eval/` when doing real client work** — it is quality
@@ -34,11 +34,18 @@ capabilities.
    git-history footnote.
 7. **Client-facing output goes through `tools/client-view.ts`**, never
    straight from the brain files. Dispositions, inferred motives and open
-   tensions are internal-only; the filter is code, not care.
+   tensions are internal-only; the filter is code, not care. Where the
+   engagement spans a chain, scope it with `--audience <org-id>` — two brands
+   on the same paper are rivals, and "the client" is not one reader.
 8. **Transcripts:** resolve every speaker label before extracting
    (`tools/speakers.ts`); our own people are `side: us` and never client
    stakeholders; durable "good to know" becomes an observation, not noise.
-9. After changing a brain, run `npx tsx tools/validate.ts <client-slug>`.
+9. **One brain per contractual counterparty.** When an engagement spans a
+   value chain (capacity provider → partner → brands), every organisation is
+   an `orgs.md` entry inside the one brain — never a brain of its own. People
+   move between programmes and it is one story; splitting fragments exactly
+   the history that makes it worth having.
+10. After changing a brain, run `npx tsx tools/validate.ts <client-slug>`.
 
 ## Which skill when
 

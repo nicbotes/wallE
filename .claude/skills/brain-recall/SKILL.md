@@ -26,6 +26,15 @@ is to serve it up with provenance.
   cover `side: client` (and `partner` where relevant). People marked `side: us`
   are our own team — they exist so speaker labels resolve, not to pad the
   client map. Mention them only when the question is about our side.
+- **Say which organisation someone is from.** When the brain has an `orgs.md`,
+  a person's company is the first thing to state about them — it predicts what
+  they can decide, what they care about, and what they may be told. "Head of
+  Marketing" is half an answer; "Head of Marketing at one of the distribution
+  brands, below our counterparty" is the whole one. `npx tsx
+  tools/org-chart.ts <slug>` prints the chain with people placed in it, and is
+  the fastest way to orient on a "who's who" question. Where a decision carries
+  an `authority`, name it — whose call it was is often the real answer to why
+  something happened the way it did.
 - **Use observations.** `observations.md` holds the org-navigation context —
   how their budget cycle works, who has history with whom, what a given person
   expects in a room. Fold the relevant ones into any answer where they'd change
@@ -50,7 +59,8 @@ the 2–3 active decisions that shape everything; open gaps (unattributed
 requirements, stale facts).
 
 ### Who is X? / people questions
-Their stakeholder entry + incentives (stated vs inferred) + trajectory: run
+Their organisation and where it sits in the chain (if there is one), then their
+stakeholder entry + incentives (stated vs inferred) + trajectory: run
 `npx tsx tools/query-log.ts --client <slug> --entity <sh-id>` to narrate how
 their disposition/role moved over time — the history is often the answer.
 
@@ -60,7 +70,8 @@ any decisions in the last 90 days.
 
 ### Prep me for a meeting with Y
 The consultant's edge, compressed:
-1. Who they are, disposition **and trajectory** (how it changed, and why).
+1. Who they are, **which organisation they're from**, disposition **and
+   trajectory** (how it changed, and why).
 2. What they actually want (incentives — stated vs inferred).
 3. Requirements they own and each one's status (never walk in not knowing).
 4. Open tensions they're a party to — and who's on the other side.

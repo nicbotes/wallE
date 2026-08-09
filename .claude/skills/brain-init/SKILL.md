@@ -34,13 +34,24 @@ Read `schema/SCHEMA.md` before writing anything. Never invent facts.
    `brain-domain`. Don't invent a pack mid-init — attaching is one line;
    authoring vocabulary deserves its own pass.
 
-5. **Commit** through the gate (one commit for the whole init):
+5. **Ask whether the engagement spans a chain.** Most don't — one client, one
+   organisation, and `orgs.md` stays as shipped. But enterprise work often
+   runs through several companies (in insurance: a capacity provider above the
+   party we contract with, distribution brands below it), and getting that
+   down early is much cheaper than reconstructing it later. If the user
+   describes such a chain, record each organisation in `orgs.md` and commit
+   them as `org-new` findings **before** the init commit's people, since
+   stakeholders reference them. The brain is named for, and scoped to, **the
+   organisation we contract with** (`tier: principal`) — never split a chain
+   into separate brains.
+
+6. **Commit** through the gate (one commit for the whole init):
    ```
    tools/commit-finding.sh -c <slug> -t brain-init -e <slug> -s manual \
        -m "initialise client brain" clients/<slug>
    ```
 
-6. **Tell the user** the brain exists with capability but no context yet, and
+7. **Tell the user** the brain exists with capability but no context yet, and
    that understanding grows drop by drop — invite the first context drop
    (a transcript, notes, an email, or just talking through a meeting).
 

@@ -226,6 +226,7 @@ the judgement the tool removes.
 | | Internal | Client-facing |
 | --- | --- | --- |
 | Skills | `brain-recall` · `brain-diff` · `brain-onboard` · `brain-audit` | `brain-brief` |
+| Audience | one team | one *organisation* — `--audience` scopes to their line of the chain |
 | People | disposition, influence, trajectory | name and role only; our own team excluded |
 | Motives | stated *and* inferred, with confidence | none |
 | Observations | how to handle the room | none |
@@ -241,6 +242,63 @@ output client-ready until a human has looked at them.
 npx tsx tools/client-view.ts acme-utilities            # Markdown, with review flags
 npx tsx tools/client-view.ts acme-utilities --json     # for a UI
 ```
+
+### When the client is several companies
+
+Enterprise engagements rarely stop at one organisation. In insurance the chain
+runs capacity provider → the partner we contract with → the brands the product
+is distributed through, and we talk up and down it every week. One brain covers
+the whole chain — the people move between programmes and it is one story — with
+`orgs.md` recording who sits where.
+
+```mermaid
+flowchart TD
+    CAP["Northwind Capacity<br/><i>upstream · capacity provider</i>"]
+    MGA["Our counterparty<br/><i>principal · the brain is named for them</i>"]
+    B1["Brightline<br/><i>downstream · brand</i>"]
+    B2["Harbour Row<br/><i>downstream · brand</i>"]
+    US["Us<br/><i>us · technology partner</i>"]
+    CAP -->|authority flows down| MGA
+    MGA --> B1
+    MGA --> B2
+    US -.->|deliver for| MGA
+    US -.-> B1
+    US -.-> B2
+```
+
+Two fields carry it, and they are deliberately different kinds of thing:
+**`tier`** is structural (`us`, `principal`, `upstream`, `downstream`, `peer`)
+and is what code keys off; **`role`** is the domain's own word ("capacity
+provider", "MGA", "distribution brand") and is what humans read. Same split as
+the domain packs — the capability layer stays generic, the vocabulary comes
+from the domain.
+
+It changes two answers that were previously unrepresentable:
+
+- **Whose call was it?** A decision records `authority` — the organisation
+  entitled to make it — separately from the people who took it. The partner
+  sets the launch date; the capacity provider can veto it on regulatory
+  grounds without being in the room.
+- **Who may be told?** "The client" is no longer one reader. Two brands on the
+  same paper are commercial rivals.
+
+```bash
+npx tsx tools/org-chart.ts acme-mga                          # the chain, with people placed in it
+npx tsx tools/client-view.ts acme-mga --audience org-brightline
+```
+
+An audience-scoped view emits **nothing that isn't explicitly attributable to
+that organisation** — a person who belongs to it, or a decision made under its
+authority. So an unattributed requirement is withheld, and an upstream rule
+that binds a brand in practice is *not* shown to that brand unless someone
+from it was party to the decision. Bindingness is not derivable from tier, and
+guessing it would be guessing with a client's data. The view under-shares by
+design, reports how much it withheld so a partial answer is never read as a
+complete one, and refuses an unknown audience rather than quietly falling back
+to everyone.
+
+Single-organisation clients need none of this: `orgs.md` stays empty and every
+field is optional.
 
 ## Quality: evals
 
@@ -329,7 +387,7 @@ schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) 
                      brain-audit · brain-onboard · brain-domain · brain-brief
 domains/             domain packs — the thin controlled vocabulary for topics
 tools/               validate · query-log · timeline · staleness · search · speakers
-                     stats · spine · client-view · commit-finding.sh
+                     stats · spine · client-view · org-chart · commit-finding.sh
 clients/             one brain per client (ships empty)
 eval/                corpus · goldens · harness · committed score reports
 ```

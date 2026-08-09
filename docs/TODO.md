@@ -52,6 +52,13 @@ inspect what comes out. Specifically check the things synthetic data can't test:
   intended failure mode; check it's failing in that direction.
 - **Commit volume.** One finding per commit on a real hour-long meeting — is the
   history readable, or does it need more aggressive batching?
+- **The value chain.** If the client is a real multi-party engagement, does the
+  agent place each speaker in the right organisation, and does
+  `npx tsx tools/org-chart.ts <slug>` come out looking like the chain a
+  consultant would draw on a whiteboard? Then run
+  `client-view --audience <org-id>` for a real downstream organisation and
+  check the withheld counts (see 3.6) — that is the one test that says whether
+  audience scoping is usefully tight or uselessly tight.
 
 *Done when:* one real transcript is ingested, validated, and a human agrees the
 resulting brain is worth having.
@@ -106,7 +113,7 @@ never executed. Needs a cached `after-18` state from a full ingest run.
 
 ## 3. Designed, not built
 
-Three of these are now built (3.1 partly, 3.2, 3.3). What remains here is
+Four of these are now built (3.1 partly, 3.2, 3.3, 3.6). What remains here is
 mostly gated on real usage rather than on effort.
 
 ### 3.1 Client-safe view — ✅ built, one gap remains
@@ -147,6 +154,27 @@ was weighed without anyone's name against a position.
 *Possible next:* IBIS also models **Arguments** (evidence supporting a
 position). Only worth adding if positions alone prove insufficient in practice
 — resist deepening the schema speculatively.
+
+### 3.6 Multi-party value chains — ✅ built, two things to watch
+`orgs.md` (tier + role + parent), `stakeholder.org`, `decision.authority`,
+`tools/org-chart.ts`, and `client-view --audience <org-id>`. Audience scoping
+emits nothing that isn't explicitly attributable to the audience organisation,
+reports what it withheld, and refuses an unknown audience.
+
+Two open questions, both needing a real chain rather than more code:
+
+- **Under-sharing is deliberate but unmeasured.** A decision that binds a
+  downstream organisation without their participation is withheld from them,
+  because bindingness is not derivable from `tier`. If real briefs turn out to
+  withhold things a brand genuinely should see, the fix is to model it
+  explicitly (a `binds: [org-id]` list on decisions), **not** to start
+  inferring from tier. Watch the withheld counts on real output before
+  deciding.
+- **Tiers are five buckets.** `upstream`/`downstream`/`peer` covered every
+  case we could think of in insurance. A real engagement with, say, a
+  regulator *and* a group parent — both "upstream", very different
+  relationships — may show the split is too coarse. `role` absorbs the
+  difference for humans; only extend `tier` if code needs to tell them apart.
 
 ### 3.4 HubSpot sync spike
 HubSpot stays system-of-record for contacts/companies/deals; the brain is the

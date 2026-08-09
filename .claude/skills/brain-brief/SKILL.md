@@ -21,20 +21,38 @@ So the boundary is **enforced in code, not by care**:
 
 ## Procedure
 
-1. **Get the filtered view. Never read the brain files directly for a client
+1. **Establish who the reader is — the organisation, not just the person.**
+   If the brain has an `orgs.md`, "the client" is not one audience. A
+   distribution brand, the party we contract with, and the capacity provider
+   above them are entitled to different things, and a document written for one
+   is a leak if it reaches another. Run `npx tsx tools/org-chart.ts <slug>` if
+   you're unsure who sits where, and **ask the user which organisation this is
+   for** rather than assuming. Then scope the view to them:
+   ```
+   npx tsx tools/client-view.ts <slug> --audience <org-id>
+   ```
+   Only omit `--audience` when the brain has no chain, or the user has said
+   the document is for our counterparty and everyone in their line.
+
+2. **Get the filtered view. Never read the brain files directly for a client
    deliverable** — doing so reintroduces exactly the judgement the tool exists
    to remove.
    ```
-   npx tsx tools/client-view.ts <slug> [--project <proj-id>]
+   npx tsx tools/client-view.ts <slug> [--audience <org-id>] [--project <proj-id>]
    npx tsx tools/client-view.ts <slug> --json      # for a UI or further processing
    ```
+   An audience-scoped view reports what it **withheld**. Read that line: the
+   rule is that nothing is emitted unless explicitly attributed to that
+   organisation, so it deliberately under-shares. If something withheld was
+   genuinely theirs to see, the fix is in the brain — attribute the
+   requirement, record the decision's `authority` — not in the document.
 
-2. **Write from what it returned, and nothing else.** If a fact you want isn't
+3. **Write from what it returned, and nothing else.** If a fact you want isn't
    in the output, that is the answer — it is not an invitation to go and fetch
    it. If you believe something excluded genuinely belongs in a client
    document, say so to the user and let them decide; never quietly include it.
 
-3. **Handle `review_required` before anything is sent.** Structured fields are
+4. **Handle `review_required` before anything is sent.** Structured fields are
    filtered exhaustively; **prose is passed through**. Decision rationale is our
    own writing and can carry framing that reads badly outside the team ("won the
    argument", "pushed back", "reluctant"). The tool flags likely passages — it
@@ -44,7 +62,7 @@ So the boundary is **enforced in code, not by care**:
      gates won the argument"* → *"revised following a review of run-rate costs"*.
    - Never present our characterisation of a person's behaviour as fact.
 
-4. **Choose the shape** the request calls for:
+5. **Choose the shape** the request calls for:
    - **Status** — projects, phase, scope, requirement states, recent delivery.
    - **Decision history** — decisions in event order with their supersession
      chains. This is usually what "why is it this way?" actually wants: the
@@ -70,6 +88,11 @@ So the boundary is **enforced in code, not by care**:
 - **Depersonalise disagreement.** "There was a trade-off between cutover
   downtime and overtime cost, settled by the phased plan" — never "X wanted one
   thing and Y wanted another".
+- **One organisation's material is not another's.** In a chain, two brands on
+  the same paper are commercial rivals; neither is entitled to the other's
+  requirements, and neither is entitled to our counterparty's commercials.
+  Never merge two audience views into one document, and never reuse a document
+  written for one organisation with another's name on it.
 - **Attribute decisions, not attitudes.** Naming who decided something is
   factual and usually flattering. Naming who resisted it is neither.
 - **Say what you don't know.** If the brain is thin on a period, say the record
