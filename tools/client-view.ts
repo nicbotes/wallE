@@ -30,9 +30,10 @@
  * see by default.
  *
  * AUDIENCES. When the engagement spans a value chain (see orgs.md), "the
- * client" is not one reader. A distribution brand must not be shown the
- * partner's commercials or a sibling brand's requirements. `--audience <org-id>`
- * scopes the view to one organisation, under a single deliberately strict rule:
+ * client" is not one reader. An organisation below our counterparty must not
+ * be shown that counterparty's commercials or a rival's requirements.
+ * `--audience <org-id>` scopes the view to one organisation, under a single
+ * deliberately strict rule:
  *
  *   nothing is emitted unless it is explicitly attributable to that
  *   organisation — via a person who belongs to it, or a decision made under
@@ -44,9 +45,9 @@
  * but cannot unsend what leaked. Every audience view reports how much it
  * withheld so the gap is visible rather than mistaken for completeness.
  *
- * Note what this rule does NOT try to infer: a decision an upstream regulator
- * made that binds a downstream brand is not shown to that brand unless someone
- * from the brand was party to it. Bindingness is not derivable from tier, and
+ * Note what this rule does NOT try to infer: a decision made upstream that
+ * binds a downstream organisation is not shown to them unless someone of
+ * theirs was party to it. Bindingness is not derivable from tier, and
  * guessing it here would be guessing with a client's data.
  */
 

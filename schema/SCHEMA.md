@@ -91,11 +91,10 @@ Two ways backfill arrives, handled differently:
 
 ## The value chain: one brain, several organisations
 
-An enterprise engagement is rarely one organisation. In insurance the chain runs
-capacity provider → managing agent / partner → distribution brands; we contract
-with one of them and talk to the others daily. The same shape appears elsewhere:
-a systems integrator between a client and its regulator, a manufacturer between
-its supplier and its retail channel.
+An enterprise engagement is rarely one organisation. Often the work runs down a
+**vertical**: one organisation above sets the rules everything operates under,
+one in the middle holds the contract with us, and one or more below own the end
+customer. We contract at one layer and talk to the others daily.
 
 The brain is named for, and scoped to, **the organisation we contract with**.
 Everyone else in the chain is an `orgs.md` entry inside that brain, because the
@@ -106,17 +105,18 @@ Two fields do the work:
 
 - **`tier`** is structural and domain-agnostic. It drives behaviour — who may
   see what, whose authority a decision carries.
-- **`role`** is free text in the domain's own words ("capacity provider",
-  "MGA", "distribution brand"). Same split as the domain packs: the capability
-  layer stays generic, the vocabulary comes from the domain.
+- **`role`** is free text in the domain's own words ("parent group",
+  "operating company", "channel partner", or whatever that industry actually
+  says). Same split as the domain packs: the capability layer stays generic,
+  the vocabulary comes from the domain.
 
-| `tier` | Means | Typical |
+| `tier` | Means | Owns |
 | --- | --- | --- |
-| `us` | Our own organisation | the delivery team; exactly one per brain |
-| `principal` | Our contractual counterparty — who the brain is named for | the partner / MGA |
-| `upstream` | Authority flows *down* from them | capacity provider, regulator, group parent |
-| `downstream` | Distribution or delivery we serve *through* | brands, channels, subsidiaries |
-| `peer` | Alongside, no authority either way | another vendor, a co-supplier |
+| `us` | Our own organisation | our side of the work; exactly one per brain |
+| `principal` | Our contractual counterparty — who the brain is named for | the contract with us, and the terms with everyone below |
+| `upstream` | Authority flows *down* from them | the mandate everything below operates under — licence, balance sheet, group standard |
+| `downstream` | Distribution or delivery we serve *through* | the end-customer relationship and what the customer sees |
+| `peer` | Alongside, no authority either way | their own scope — a co-vendor, an auditor, an agency |
 
 `parent` links an org to the one it sits under, so the chain can be walked and
 drawn (`tools/org-chart.ts`). Cycles are a validator error.
@@ -128,15 +128,18 @@ Three consequences elsewhere in the schema:
   can decide, what they care about, and what they may be told.
 - **A decision carries `authority`.** *Who* took a decision and *which
   organisation had the right to take it* are different questions, and in a
-  chain they routinely have different answers: the partner sets the launch
-  date, the capacity provider can veto it on regulatory grounds. Without
-  `authority` that veto is unrepresentable.
-- **Client-facing output is scoped per organisation.** A brand must not be
-  shown the partner's commercials or a sibling brand's requirements. That is
-  `tools/client-view.ts --audience <org-id>`, enforced in code.
+  chain they routinely have different answers: the middle layer sets the launch
+  date, the layer above can veto it on compliance grounds without attending.
+  Without `authority` that veto is unrepresentable.
+- **Client-facing output is scoped per organisation.** An organisation below
+  our counterparty must not be shown that counterparty's commercials or a
+  rival's requirements. That is `tools/client-view.ts --audience <org-id>`,
+  enforced in code.
 
 Single-organisation engagements need none of this. `orgs.md` may be absent or
-empty, `org` and `authority` are optional, and everything behaves as before.
+empty, `org` and `authority` are optional, and everything behaves as before —
+and a brain gains a chain later without migration, as ordinary `org-new` and
+`stakeholder-update` findings.
 
 ## Layout per client
 
@@ -190,7 +193,7 @@ supersessions — never ID edits.
 | Entity | Format | Determinism |
 | --- | --- | --- |
 | Client | `<kebab-name>` e.g. `acme-utilities` | derived from name |
-| Organisation | `org-<kebab-name>` e.g. `org-northwind-capacity` | derived from name |
+| Organisation | `org-<kebab-name>` e.g. `org-acme-group` | derived from name |
 | Stakeholder | `sh-<given>-<family>` e.g. `sh-ada-vance`; collision → `-2` | derived from name as first written |
 | Project | `proj-<slug>` | derived from project name |
 | Drop | `drop-YYYY-MM-DD-<slug>`; filename `YYYY-MM-DD-<slug>.md` matches | derived from date + short label |
@@ -213,10 +216,10 @@ Only needed when the engagement spans more than one company — see
 "The value chain" above. The file may be absent for a single-org client.
 
 ```yaml
-id: org-northwind-capacity
-name: Northwind Capacity
+id: org-acme-group
+name: Acme Group
 tier: upstream                  # us | principal | upstream | downstream | peer
-role: Capacity provider         # free text, in the domain's own words
+role: Parent group              # free text, in the domain's own words
 parent: null                    # ? org id — who they sit under in the chain
 status: active                  # active | former
 first_seen: drop-2024-01-08-kickoff   # drop id
@@ -236,7 +239,7 @@ id: sh-ada-vance
 name: Ada Vance
 role: VP Engineering
 org_unit: Technology            # ? free text — a team INSIDE their organisation
-org: org-northwind-partners     # ? which organisation in the chain (orgs.md)
+org: org-acme-utilities         # ? which organisation in the chain (orgs.md)
 side: client                    # client | us | partner  (default: client)
 aliases: ["Ada", "Ada V.", "ada.vance@acme.example"]   # transcript labels & emails
 status: active                  # active | departed
@@ -317,7 +320,7 @@ id: dec-20240718-buy-not-build
 date: 2024-07-18
 status: active                  # active | superseded
 decided_by: [sh-bo-reyes, sh-ada-vance]   # stakeholder ids; [] only if truly unknown
-authority: org-northwind-partners           # ? org whose call this was to make
+authority: org-acme-utilities               # ? org whose call this was to make
 supersedes: dec-20240211-build-inhouse      # ? decision id
 superseded_by: null                             # ? decision id, set when superseded
 source: drop-2024-07-18-steering

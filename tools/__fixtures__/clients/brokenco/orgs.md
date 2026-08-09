@@ -24,7 +24,7 @@ Tier is not in the enum.
 id: org-orphan-parent
 name: Orphan Parent Co
 tier: downstream
-role: Distribution brand
+role: Channel partner
 parent: org-does-not-exist
 status: active
 first_seen: drop-2024-03-15-workshop
@@ -40,7 +40,7 @@ Parent does not resolve.
 id: org-loop-a
 name: Loop A
 tier: principal
-role: Managing agent
+role: Operating company
 parent: org-loop-b
 status: active
 first_seen: drop-2024-03-15-workshop
@@ -56,7 +56,7 @@ Half of a cyclic parent chain.
 id: org-loop-b
 name: Loop B
 tier: upstream
-role: Capacity provider
+role: Parent group
 parent: org-loop-a
 status: active
 first_seen: drop-2024-03-15-workshop

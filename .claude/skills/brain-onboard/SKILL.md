@@ -40,10 +40,10 @@ built so a newcomer can operate credibly by the end of it.
    `npx tsx tools/query-log.ts --client <slug> --type decision-superseded`.
    Build the chronology from **event dates** — `npx tsx tools/timeline.ts
    <slug>` — never commit order. Where a decision carries an `authority`, say
-   whose call it was: in a chain, "the capacity provider required it" and "our
-   counterparty chose it" are different facts with different consequences.
-   History we only learned recently is still
-   history: place it where it happened. Where a fact was reconstructed long
+   whose call it was: in a chain, "the organisation above them required it" and
+   "our counterparty chose it" are different facts with different
+   consequences. History we only learned recently is still history: place it
+   where it happened. Where a fact was reconstructed long
    after the event, say so once ("we only learned this in March") — a newcomer
    should know which parts of the story we watched and which we were told.
 

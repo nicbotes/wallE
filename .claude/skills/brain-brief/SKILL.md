@@ -22,12 +22,13 @@ So the boundary is **enforced in code, not by care**:
 ## Procedure
 
 1. **Establish who the reader is — the organisation, not just the person.**
-   If the brain has an `orgs.md`, "the client" is not one audience. A
-   distribution brand, the party we contract with, and the capacity provider
-   above them are entitled to different things, and a document written for one
-   is a leak if it reaches another. Run `npx tsx tools/org-chart.ts <slug>` if
-   you're unsure who sits where, and **ask the user which organisation this is
-   for** rather than assuming. Then scope the view to them:
+   If the brain has an `orgs.md`, "the client" is not one audience. An
+   organisation we deliver through, the party we contract with, and whoever
+   sets the rules above them are entitled to different things, and a document
+   written for one is a leak if it reaches another. Run
+   `npx tsx tools/org-chart.ts <slug>` if you're unsure who sits where, and
+   **ask the user which organisation this is for** rather than assuming. Then
+   scope the view to them:
    ```
    npx tsx tools/client-view.ts <slug> --audience <org-id>
    ```
@@ -88,11 +89,12 @@ So the boundary is **enforced in code, not by care**:
 - **Depersonalise disagreement.** "There was a trade-off between cutover
   downtime and overtime cost, settled by the phased plan" — never "X wanted one
   thing and Y wanted another".
-- **One organisation's material is not another's.** In a chain, two brands on
-  the same paper are commercial rivals; neither is entitled to the other's
-  requirements, and neither is entitled to our counterparty's commercials.
-  Never merge two audience views into one document, and never reuse a document
-  written for one organisation with another's name on it.
+- **One organisation's material is not another's.** In a chain, two
+  organisations at the same level are usually competing for the same customers;
+  neither is entitled to the other's requirements, and neither is entitled to
+  our counterparty's commercials. Never merge two audience views into one
+  document, and never reuse a document written for one organisation with
+  another's name on it.
 - **Attribute decisions, not attitudes.** Naming who decided something is
   factual and usually flattering. Naming who resisted it is neither.
 - **Say what you don't know.** If the brain is thin on a period, say the record

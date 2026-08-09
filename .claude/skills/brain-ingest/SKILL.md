@@ -112,9 +112,9 @@ While drafting:
   `org-update` (status → former), never a deletion.
 - **Record whose call a decision was, when it isn't obvious.** `authority` is
   the organisation that had the right to decide, which in a chain is often not
-  the people in the room — the partner sets the launch date, the capacity
-  provider can veto it on regulatory grounds. Set it when the drop makes it
-  clear; leave it off rather than guessing.
+  the people in the room — our counterparty sets the launch date, the
+  organisation above them can veto it on compliance grounds. Set it when the
+  drop makes it clear; leave it off rather than guessing.
 - **Departures** are `stakeholder-update` (status → departed), never deletion.
 - **A reversed decision** is ONE finding (`decision-superseded`): add the new
   entry AND stamp the old one (`status: superseded`, `superseded_by`) in the

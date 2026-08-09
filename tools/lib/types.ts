@@ -23,7 +23,7 @@ export interface Org {
   id: string;
   name: string;
   tier: Tier;
-  /** The domain's own word: "capacity provider", "MGA", "distribution brand". */
+  /** The domain's own word: "parent group", "operating company", "channel partner". */
   role: string;
   /** Who they sit under in the chain. Null/absent for the top of a chain. */
   parent?: string | null;

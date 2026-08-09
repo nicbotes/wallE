@@ -70,7 +70,7 @@ stakeholder views.
 ```yaml
 id: sh-remy-alto
 name: Remy Alto
-role: Brand Lead
+role: Channel Lead
 org: org-brightline
 side: client
 aliases: ["Remy"]
@@ -84,7 +84,7 @@ last_confirmed: 2024-02-10
 sources: [drop-2024-02-10-scope-review]
 ```
 
-Runs one of the two distribution brands. Cares about what his customers see.
+Runs one of the two channel partners. Cares about what his customers see.
 
 ## Tess Orin (sh-tess-orin)
 
@@ -105,7 +105,7 @@ last_confirmed: 2024-02-10
 sources: [drop-2024-02-10-scope-review]
 ```
 
-The sibling brand's lead. Nothing of hers may reach Brightline.
+The rival channel's lead. Nothing of hers may reach Brightline.
 
 ## Nils Berg (sh-nils-berg)
 
@@ -113,7 +113,7 @@ The sibling brand's lead. Nothing of hers may reach Brightline.
 id: sh-nils-berg
 name: Nils Berg
 role: Risk Officer
-org: org-northwind-capacity
+org: org-crestline-group
 side: partner
 aliases: ["Nils"]
 status: active
@@ -126,5 +126,5 @@ last_confirmed: 2024-03-01
 sources: [drop-2024-03-01-review]
 ```
 
-Sits at the capacity provider, above everyone else in the chain. Can veto on
-regulatory grounds without being in the room for the decision he vetoes.
+Sits at the parent group, above everyone else in the chain. Can veto on
+compliance grounds without being in the room for the decision he vetoes.

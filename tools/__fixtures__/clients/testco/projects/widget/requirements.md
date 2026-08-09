@@ -29,7 +29,7 @@ last_confirmed: 2024-02-10
 
 Heard in the workshop; nobody owned it. Gap to close.
 
-## Brand-specific checkout copy (req-brand-checkout-copy)
+## Channel-specific checkout copy (req-brand-checkout-copy)
 
 ```yaml
 id: req-brand-checkout-copy
@@ -41,8 +41,8 @@ source: drop-2024-02-10-scope-review
 last_confirmed: 2024-02-10
 ```
 
-Brightline wants the checkout wording in its own voice, not the managing
-agent's.
+Brightline wants the checkout wording in its own voice, not the operating
+company's.
 
 ## Pricing table on the quote page (req-sibling-pricing-table)
 
@@ -56,5 +56,5 @@ source: drop-2024-02-10-scope-review
 last_confirmed: 2024-02-10
 ```
 
-Harbour Row's ask. A Brightline-scoped view must not show this — two brands on
-the same paper are not entitled to each other's roadmaps.
+Harbour Row's ask. A Brightline-scoped view must not show this — two channel
+partners chasing the same customers are not entitled to each other's roadmaps.

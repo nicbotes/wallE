@@ -34,23 +34,23 @@ source: drop-2024-01-05-kickoff
 
 All vendors reviewed annually against spend.
 
-<!-- The capacity provider's call, not TestCo's, and taken without anyone from
-     the brands present. It binds them in practice — which is exactly why
-     client-view withholds it from a brand audience rather than inferring that
-     "upstream" means "shareable downstream". -->
+<!-- The parent group's call, not TestCo's, and taken without anyone from the
+     channel partners present. It binds them in practice — which is exactly why
+     client-view withholds it from a downstream audience rather than inferring
+     that "upstream" means "shareable downstream". -->
 
-## Quarterly risk reporting on the whole book (dec-20240220-quarterly-risk-reporting)
+## Quarterly compliance reporting across the group (dec-20240220-quarterly-risk-reporting)
 
 ```yaml
 id: dec-20240220-quarterly-risk-reporting
 date: 2024-02-20
 status: active
 decided_by: [sh-nils-berg]
-authority: org-northwind-capacity
+authority: org-crestline-group
 supersedes: null
 superseded_by: null
 source: drop-2024-03-01-review
 ```
 
-Northwind requires quarterly risk reporting across everything written on its
-paper, whoever distributes it.
+Crestline requires quarterly compliance reporting from every company in the
+group, whoever the end customer is.

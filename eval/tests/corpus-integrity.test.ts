@@ -200,6 +200,34 @@ describe("leakage lint", () => {
     }
   });
 
+  it("capability layer carries no industry jargon — that lives in domain packs", () => {
+    // Same principle one level up: the corpus lint keeps client knowledge out,
+    // this keeps DOMAIN knowledge out. A value chain described in one
+    // industry's words both narrows the tool for everyone else and publishes
+    // how our own engagements are structured. `domains/` is where vocabulary
+    // belongs, so it is deliberately not scanned; the word "insurance" itself
+    // stays legal, since it names the shipped pack.
+    const JARGON = [
+      "capacity provider", "managing agent", "distribution brand",
+      "underwrit", "insurer", "policyholder", "reinsur",
+    ];
+    const targets = [".claude", "schema", "tools"].map((d) => path.join(REPO, d));
+    for (const target of targets) {
+      for (const word of JARGON) {
+        let out = "";
+        try {
+          out = execFileSync("rg", ["-il", word, target], { encoding: "utf8" });
+        } catch {
+          continue; // rg exit 1 = no matches = good
+        }
+        expect.fail(
+          `"${word}" is domain vocabulary and belongs in domains/, not the ` +
+            `capability layer:\n${out}`,
+        );
+      }
+    }
+  });
+
   it("corpus is never referenced from the client template", () => {
     const template = path.join(REPO, "schema", "templates");
     const files = readdirSync(template, { recursive: true });

@@ -245,46 +245,82 @@ npx tsx tools/client-view.ts acme-utilities --json     # for a UI
 
 ### When the client is several companies
 
-Enterprise engagements rarely stop at one organisation. In insurance the chain
-runs capacity provider → the partner we contract with → the brands the product
-is distributed through, and we talk up and down it every week. One brain covers
-the whole chain — the people move between programmes and it is one story — with
-`orgs.md` recording who sits where.
+Enterprise engagements rarely stop at one organisation. Often the work runs
+down a **vertical**: someone above sets the rules, someone in the middle holds
+the contract, and someone below owns the end customer — and we talk up and
+down it every week. One brain covers the whole chain, because the people move
+between programmes and it is one story. `orgs.md` records who sits where.
+
+#### The three layers
+
+Tiers are defined by **what each layer owns**, which is what makes them behave
+differently — not by any particular industry's names for them.
+
+| Layer | `tier` | Owns | Consequence |
+| --- | --- | --- | --- |
+| **Above** | `upstream` | The mandate everything below operates under — the licence, the balance sheet, the group standard. | It can block a decision on those grounds **without being in the room**. Its rules are constraints, not preferences, so they aren't negotiated — they're discovered. |
+| **The middle** | `principal` | The contract with us, the thing being built, and the commercial terms with everyone below. | Who we invoice, whose priorities usually win, and who the brain is named for. |
+| **Below** | `downstream` | The end-customer relationship and whatever the customer actually sees. | Each wants its own version, and they are usually rivals to each other — so what one may be told is not what another may. |
+
+Two more tiers sit outside the vertical. **`us`** is our own organisation: we
+contract at one layer, normally the middle, but deal with all of them.
+**`peer`** is anyone alongside with no authority in either direction — a
+co-vendor, an auditor, an agency.
 
 ```mermaid
 flowchart TD
-    CAP["Northwind Capacity<br/><i>upstream · capacity provider</i>"]
-    MGA["Our counterparty<br/><i>principal · the brain is named for them</i>"]
-    B1["Brightline<br/><i>downstream · brand</i>"]
-    B2["Harbour Row<br/><i>downstream · brand</i>"]
-    US["Us<br/><i>us · technology partner</i>"]
-    CAP -->|authority flows down| MGA
-    MGA --> B1
-    MGA --> B2
-    US -.->|deliver for| MGA
-    US -.-> B1
-    US -.-> B2
+    UP["Above<br/><i>upstream · sets the rules</i>"]
+    MID["Our counterparty<br/><i>principal · holds the contract</i>"]
+    D1["Channel A<br/><i>downstream · owns the customer</i>"]
+    D2["Channel B<br/><i>downstream · a rival to A</i>"]
+    US["Us<br/><i>us · alongside, not in the vertical</i>"]
+    UP -->|authority flows down| MID
+    MID --> D1
+    MID --> D2
+    US -.->|deliver for| MID
+    US -.-> D1
+    US -.-> D2
 ```
 
-Two fields carry it, and they are deliberately different kinds of thing:
-**`tier`** is structural (`us`, `principal`, `upstream`, `downstream`, `peer`)
-and is what code keys off; **`role`** is the domain's own word ("capacity
-provider", "MGA", "distribution brand") and is what humans read. Same split as
-the domain packs — the capability layer stays generic, the vocabulary comes
-from the domain.
+#### From 1:1 to the full vertical
 
-It changes two answers that were previously unrepresentable:
+Most engagements are two parties and stay that way. The chain is there when
+you need it, and costs nothing when you don't:
+
+| Shape | Parties | What you set up |
+| --- | --- | --- |
+| **Direct** | 2 — us + the client | Nothing. `orgs.md` stays empty, `org` and `authority` unset. This is the default. |
+| **Looking up** | 3 — + whoever they answer to | Two organisations, `parent` linking them. |
+| **Looking down** | 3 — + who they deliver through | The counterparty plus one organisation per channel. |
+| **Full vertical** | 4 — all three layers, plus us | The chain end to end. |
+
+These are **not four modes in the code**. They are the same optional fields,
+filled in to different depths — so a brain moves down the table whenever
+reality does, with no migration: `org-new` for the newcomers, and
+`stakeholder-update` to place people already recorded. A client who turns out
+to have a parent company two years in is an ordinary Tuesday, not a rebuild.
+
+#### What it makes representable
+
+Two fields carry it, and they are deliberately different kinds of thing:
+**`tier`** is structural (the five above) and is what code keys off; **`role`**
+is free text in the domain's own words — "parent group", "operating company",
+"channel partner", or whatever that industry actually says — and is what
+humans read. Same split as the domain packs: the capability stays generic, the
+vocabulary comes from the domain.
+
+Together they answer two questions the schema previously couldn't:
 
 - **Whose call was it?** A decision records `authority` — the organisation
-  entitled to make it — separately from the people who took it. The partner
-  sets the launch date; the capacity provider can veto it on regulatory
-  grounds without being in the room.
-- **Who may be told?** "The client" is no longer one reader. Two brands on the
-  same paper are commercial rivals.
+  entitled to make it — separately from the people who took it. The middle
+  layer sets the launch date; the layer above can veto it on compliance
+  grounds without attending a single meeting.
+- **Who may be told?** "The client" is no longer one reader. Two organisations
+  at the same level of a chain are usually competing for the same customers.
 
 ```bash
-npx tsx tools/org-chart.ts acme-mga                          # the chain, with people placed in it
-npx tsx tools/client-view.ts acme-mga --audience org-brightline
+npx tsx tools/org-chart.ts acme-utilities                          # the chain, with people placed in it
+npx tsx tools/client-view.ts acme-utilities --audience org-channel-a
 ```
 
 An audience-scoped view emits **nothing that isn't explicitly attributable to
@@ -296,9 +332,6 @@ guessing it would be guessing with a client's data. The view under-shares by
 design, reports how much it withheld so a partial answer is never read as a
 complete one, and refuses an unknown audience rather than quietly falling back
 to everyone.
-
-Single-organisation clients need none of this: `orgs.md` stays empty and every
-field is optional.
 
 ## Quality: evals
 

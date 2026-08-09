@@ -36,12 +36,13 @@ capabilities.
    straight from the brain files. Dispositions, inferred motives and open
    tensions are internal-only; the filter is code, not care. Where the
    engagement spans a chain, scope it with `--audience <org-id>` — two brands
-   on the same paper are rivals, and "the client" is not one reader.
+   at the same level of a chain compete, and "the client" is not one reader.
 8. **Transcripts:** resolve every speaker label before extracting
    (`tools/speakers.ts`); our own people are `side: us` and never client
    stakeholders; durable "good to know" becomes an observation, not noise.
 9. **One brain per contractual counterparty.** When an engagement spans a
-   value chain (capacity provider → partner → brands), every organisation is
+   value chain (whoever they answer to → our counterparty → whoever they
+   deliver through), every organisation is
    an `orgs.md` entry inside the one brain — never a brain of its own. People
    move between programmes and it is one story; splitting fragments exactly
    the history that makes it worth having.

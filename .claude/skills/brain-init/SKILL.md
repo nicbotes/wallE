@@ -36,9 +36,9 @@ Read `schema/SCHEMA.md` before writing anything. Never invent facts.
 
 5. **Ask whether the engagement spans a chain.** Most don't — one client, one
    organisation, and `orgs.md` stays as shipped. But enterprise work often
-   runs through several companies (in insurance: a capacity provider above the
-   party we contract with, distribution brands below it), and getting that
-   down early is much cheaper than reconstructing it later. If the user
+   runs through several companies — someone above setting the rules, someone
+   below owning the end customer — and getting that down early is much cheaper
+   than reconstructing it later. If the user
    describes such a chain, record each organisation in `orgs.md` and commit
    them as `org-new` findings **before** the init commit's people, since
    stakeholders reference them. The brain is named for, and scoped to, **the

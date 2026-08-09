@@ -3,10 +3,10 @@
  *
  *   npx tsx tools/org-chart.ts <client-slug> [--json] [--clients-dir <dir>]
  *
- * A chain — capacity provider above the partner we contract with, distribution
- * brands below it — is close to unreadable as raw YAML spread across a file.
- * This prints who sits where, who we contract with, which way authority flows,
- * and who we actually know at each organisation.
+ * A chain — whoever sets the rules above the party we contract with, whoever
+ * they deliver through below it — is close to unreadable as raw YAML spread
+ * across a file. This prints who sits where, who we contract with, which way
+ * authority flows, and who we actually know at each organisation.
  *
  * Read-only. It draws what `orgs.md` says; `tools/validate.ts` is what says
  * whether `orgs.md` is coherent.

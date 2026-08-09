@@ -31,7 +31,7 @@ describe("org-chart (the value chain, drawn)", () => {
   const testco = chart("testco");
 
   it("nests the chain under its roots", () => {
-    expect(testco.orgs.map((o) => o.id)).toEqual(["org-northwind-capacity", "org-ours"]);
+    expect(testco.orgs.map((o) => o.id)).toEqual(["org-crestline-group", "org-ours"]);
     const partner = testco.orgs[0]!.children[0]!;
     expect(partner.id).toBe("org-testco");
     expect(partner.children.map((c) => c.id)).toEqual(["org-brightline", "org-harbour-row"]);
@@ -50,7 +50,7 @@ describe("org-chart (the value chain, drawn)", () => {
 
   it("prints the tier's meaning, not just its name", () => {
     const md = run("testco");
-    expect(md).toContain("Northwind Capacity** — Capacity provider _(upstream: authority flows down from them)_");
+    expect(md).toContain("Crestline Group** — Parent group _(upstream: authority flows down from them)_");
     expect(md).toContain("Ada Vance, CTO");
   });
 

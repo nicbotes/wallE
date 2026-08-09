@@ -73,13 +73,13 @@ describe("parseBrain on the testco fixture", () => {
 
   it("reads the value chain from orgs.md", () => {
     expect(brain.orgs.map((o) => o.id)).toEqual([
-      "org-northwind-capacity", "org-testco", "org-brightline",
+      "org-crestline-group", "org-testco", "org-brightline",
       "org-harbour-row", "org-ours",
     ]);
     const partner = brain.orgs.find((o) => o.id === "org-testco")!;
     expect(partner.tier).toBe("principal");
-    expect(partner.role).toBe("Managing agent");
-    expect(partner.parent).toBe("org-northwind-capacity");
+    expect(partner.role).toBe("Operating company");
+    expect(partner.parent).toBe("org-crestline-group");
   });
 
   it("places stakeholders in organisations and decisions under an authority", () => {
@@ -89,7 +89,7 @@ describe("parseBrain on the testco fixture", () => {
     const upstream = brain.decisions.find(
       (d) => d.id === "dec-20240220-quarterly-risk-reporting",
     )!;
-    expect(upstream.authority).toBe("org-northwind-capacity");
+    expect(upstream.authority).toBe("org-crestline-group");
     expect(upstream.decided_by).toEqual(["sh-nils-berg"]);
   });
 
