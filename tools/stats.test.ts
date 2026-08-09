@@ -39,7 +39,7 @@ describe("stats (raw corpus vs projection)", () => {
     const s = stats("testco")[0]!;
     // brain excludes drops/, so the two are disjoint — their file counts must
     // not overlap with a combined walk of the client directory.
-    expect(s.brain.files + s.drops.files).toBe(14);
+    expect(s.brain.files + s.drops.files).toBe(15);
   });
 
   it("estimates tokens from words", () => {

@@ -65,9 +65,32 @@ describe("parseBrain on the testco fixture", () => {
     expect(brain.profile?.id).toBe("testco");
     expect(brain.stakeholders.map((s) => s.id).sort()).toEqual([
       "sh-ada-vance", "sh-bo-reyes", "sh-jules-marek",
+      "sh-nils-berg", "sh-remy-alto", "sh-tess-orin",
     ]);
     expect(brain.incentives[0]!.kind).toBe("inferred");
     expect(brain.tensions[0]!.resolved_by).toBe("dec-20240301-phased-rollout");
+  });
+
+  it("reads the value chain from orgs.md", () => {
+    expect(brain.orgs.map((o) => o.id)).toEqual([
+      "org-northwind-capacity", "org-testco", "org-brightline",
+      "org-harbour-row", "org-ours",
+    ]);
+    const partner = brain.orgs.find((o) => o.id === "org-testco")!;
+    expect(partner.tier).toBe("principal");
+    expect(partner.role).toBe("Managing agent");
+    expect(partner.parent).toBe("org-northwind-capacity");
+  });
+
+  it("places stakeholders in organisations and decisions under an authority", () => {
+    expect(brain.stakeholders.find((s) => s.id === "sh-remy-alto")!.org)
+      .toBe("org-brightline");
+    // Whose call it was, distinct from who was in the room.
+    const upstream = brain.decisions.find(
+      (d) => d.id === "dec-20240220-quarterly-risk-reporting",
+    )!;
+    expect(upstream.authority).toBe("org-northwind-capacity");
+    expect(upstream.decided_by).toEqual(["sh-nils-berg"]);
   });
 
   it("reads stakeholder side and aliases", () => {

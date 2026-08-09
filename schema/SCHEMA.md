@@ -89,11 +89,61 @@ Two ways backfill arrives, handled differently:
    (that meeting really did happen today); the entities extracted from it carry
    their own, older event dates.
 
+## The value chain: one brain, several organisations
+
+An enterprise engagement is rarely one organisation. In insurance the chain runs
+capacity provider → managing agent / partner → distribution brands; we contract
+with one of them and talk to the others daily. The same shape appears elsewhere:
+a systems integrator between a client and its regulator, a manufacturer between
+its supplier and its retail channel.
+
+The brain is named for, and scoped to, **the organisation we contract with**.
+Everyone else in the chain is an `orgs.md` entry inside that brain, because the
+people move between programmes and the story is one story. Splitting the chain
+into separate brains would fragment exactly the history that makes it valuable.
+
+Two fields do the work:
+
+- **`tier`** is structural and domain-agnostic. It drives behaviour — who may
+  see what, whose authority a decision carries.
+- **`role`** is free text in the domain's own words ("capacity provider",
+  "MGA", "distribution brand"). Same split as the domain packs: the capability
+  layer stays generic, the vocabulary comes from the domain.
+
+| `tier` | Means | Typical |
+| --- | --- | --- |
+| `us` | Our own organisation | the delivery team; exactly one per brain |
+| `principal` | Our contractual counterparty — who the brain is named for | the partner / MGA |
+| `upstream` | Authority flows *down* from them | capacity provider, regulator, group parent |
+| `downstream` | Distribution or delivery we serve *through* | brands, channels, subsidiaries |
+| `peer` | Alongside, no authority either way | another vendor, a co-supplier |
+
+`parent` links an org to the one it sits under, so the chain can be walked and
+drawn (`tools/org-chart.ts`). Cycles are a validator error.
+
+Three consequences elsewhere in the schema:
+
+- **A stakeholder carries `org`.** In a chain, which organisation someone
+  belongs to is the single most useful fact about them — it predicts what they
+  can decide, what they care about, and what they may be told.
+- **A decision carries `authority`.** *Who* took a decision and *which
+  organisation had the right to take it* are different questions, and in a
+  chain they routinely have different answers: the partner sets the launch
+  date, the capacity provider can veto it on regulatory grounds. Without
+  `authority` that veto is unrepresentable.
+- **Client-facing output is scoped per organisation.** A brand must not be
+  shown the partner's commercials or a sibling brand's requirements. That is
+  `tools/client-view.ts --audience <org-id>`, enforced in code.
+
+Single-organisation engagements need none of this. `orgs.md` may be absent or
+empty, `org` and `authority` are optional, and everything behaves as before.
+
 ## Layout per client
 
 ```
 clients/<client-slug>/
 ├── client.md            # profile, engagement map, reading order
+├── orgs.md              # the value chain: who sits where, and above/below whom
 ├── stakeholders.md      # org-level: people outlive projects (client + our side)
 ├── incentives.md        # org-level: stated vs inferred motives
 ├── observations.md      # org-level: durable "good to know" context
@@ -140,6 +190,7 @@ supersessions — never ID edits.
 | Entity | Format | Determinism |
 | --- | --- | --- |
 | Client | `<kebab-name>` e.g. `acme-utilities` | derived from name |
+| Organisation | `org-<kebab-name>` e.g. `org-northwind-capacity` | derived from name |
 | Stakeholder | `sh-<given>-<family>` e.g. `sh-ada-vance`; collision → `-2` | derived from name as first written |
 | Project | `proj-<slug>` | derived from project name |
 | Drop | `drop-YYYY-MM-DD-<slug>`; filename `YYYY-MM-DD-<slug>.md` matches | derived from date + short label |
@@ -156,13 +207,36 @@ supersessions — never ID edits.
 Enum values are closed sets; the validator rejects others. Optional fields are
 marked `?`. Dates are `YYYY-MM-DD`.
 
+### Organisation (`orgs.md`)
+
+Only needed when the engagement spans more than one company — see
+"The value chain" above. The file may be absent for a single-org client.
+
+```yaml
+id: org-northwind-capacity
+name: Northwind Capacity
+tier: upstream                  # us | principal | upstream | downstream | peer
+role: Capacity provider         # free text, in the domain's own words
+parent: null                    # ? org id — who they sit under in the chain
+status: active                  # active | former
+first_seen: drop-2024-01-08-kickoff   # drop id
+last_confirmed: 2024-07-18
+sources: [drop-2024-01-08-kickoff]
+```
+
+Prose: what they do in the chain, what they control, how we deal with them.
+
+Exactly one org may be `tier: us`. `parent` must resolve and must not form a
+cycle. `tier` is what code keys off; `role` is what humans read.
+
 ### Stakeholder (`stakeholders.md`)
 
 ```yaml
 id: sh-ada-vance
 name: Ada Vance
 role: VP Engineering
-org_unit: Technology            # ? free text
+org_unit: Technology            # ? free text — a team INSIDE their organisation
+org: org-northwind-partners     # ? which organisation in the chain (orgs.md)
 side: client                    # client | us | partner  (default: client)
 aliases: ["Ada", "Ada V.", "ada.vance@acme.example"]   # transcript labels & emails
 status: active                  # active | departed
@@ -183,6 +257,12 @@ too; they are recorded with `side: us` (who owns the relationship, who heard
 what) but are **never** counted as client stakeholders — `brain-recall` and
 `brain-onboard` filter them out of stakeholder counts, top-N lists and meeting
 prep. `partner` is for third parties (another vendor, an auditor).
+
+**`org`** and **`org_unit`** answer different questions: `org` is which *company*
+in the chain they belong to, `org_unit` is which team inside it. In a
+single-organisation brain only `org_unit` is needed. Where both `org` and `side`
+are present they must agree — someone at the `tier: us` organisation is
+`side: us` — and the validator warns when they don't.
 
 **`aliases`** is how speaker labels resolve. The same person appears as "Ada",
 "Ada Vance", "Ada V. (Acme)" and an email address across different transcripts;
@@ -237,6 +317,7 @@ id: dec-20240718-buy-not-build
 date: 2024-07-18
 status: active                  # active | superseded
 decided_by: [sh-bo-reyes, sh-ada-vance]   # stakeholder ids; [] only if truly unknown
+authority: org-northwind-partners           # ? org whose call this was to make
 supersedes: dec-20240211-build-inhouse      # ? decision id
 superseded_by: null                             # ? decision id, set when superseded
 source: drop-2024-07-18-steering
@@ -245,6 +326,10 @@ source: drop-2024-07-18-steering
 Prose: what was decided, why, context. Files are append-only: a supersession
 adds the new entry and edits exactly two fields on the old one (`status`,
 `superseded_by`).
+
+**`authority`** records *whose call it was*, which in a multi-organisation chain
+is not the same as who was in the room. Omit it when the brain has no `orgs.md`
+or the answer is simply "the client".
 
 ### Requirement (`projects/<p>/requirements.md`)
 
@@ -370,7 +455,12 @@ them — resolving those to people is the stakeholder `aliases` field's job.
 
 ## Referential integrity (validator-enforced)
 
-- Every `sh-`/`dec-`/`proj-`/`drop-` reference must resolve within the client.
+- Every `sh-`/`dec-`/`proj-`/`drop-`/`org-` reference must resolve within the
+  client.
+- An org's `parent` chain must terminate — no cycles — and at most one org may
+  be `tier: us`.
+- A stakeholder's `org` and `side` must agree where both are present (warning,
+  not an error, since `side` predates `org`).
 - `supersedes`/`superseded_by` must be reciprocal, and a superseded decision
   must have `status: superseded`.
 - A tension with `status: resolved` must have `resolved` and (if a decision

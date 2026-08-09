@@ -26,6 +26,12 @@ describe("validateBrain on the clean fixture", () => {
     expect(result.errors.filter((e) => e.includes("ten-speed-vs-spend"))).toEqual([]);
   });
 
+  it("accepts a coherent multi-organisation value chain", () => {
+    expect(result.errors.filter((e) => e.includes("orgs.md"))).toEqual([]);
+    // …and raises no side/tier complaint when the two signals agree.
+    expect(result.warnings.some((w) => w.includes("one of them is wrong"))).toBe(false);
+  });
+
   it("accepts backfill — an event dated long before the drop that taught us", () => {
     // dec-20220614-security-review-gate: 2022 decision, learned via a 2024 drop.
     expect(result.errors.filter((e) => e.includes("security-review-gate"))).toEqual([]);
@@ -117,6 +123,33 @@ describe("validateBrain on the poisoned fixture", () => {
     // The entity has other (topic) errors; what must never be an error is the
     // missing attribution itself.
     expect(result.errors.some((e) => e.includes("unattributed"))).toBe(false);
+  });
+
+  it("catches a mismodelled value chain", () => {
+    expectError('tier "overlord"');
+    expectError('status "dissolved"');
+    expectError('parent "org-does-not-exist" is not a known organisation');
+    expectError('2 organisations have tier "us"');
+    // The cycle must be reported, not walked forever.
+    expect(all).toContain("parent chain is cyclic");
+    expect(all).toContain("orgs.md (org-loop-a)");
+    expect(all).toContain("orgs.md (org-loop-b)");
+  });
+
+  it("catches dangling org references from people and decisions", () => {
+    expectError('org "org-vanished" is not a known organisation');
+    expectError('authority "org-not-in-the-chain" is not a known organisation');
+  });
+
+  it("warns when a person's side and their organisation's tier disagree", () => {
+    // sh-alias-thief is `side: client` at an org with `tier: us`. A warning,
+    // not an error — `side` predates `org` — but client-view excludes them on
+    // either signal, so the disagreement must be visible.
+    expect(
+      result.warnings.some(
+        (w) => w.includes("sh-alias-thief") && w.includes("one of them is wrong"),
+      ),
+    ).toBe(true);
   });
 
   it("catches an unknown domain pack and an unresolvable controlled topic", () => {

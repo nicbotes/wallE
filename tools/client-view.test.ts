@@ -73,6 +73,9 @@ describe("client-view: what must not leak", () => {
     expect(json.people).toEqual([
       { name: "Ada Vance", role: "CTO" },
       { name: "Bo Reyes", role: "Finance Director" },
+      { name: "Remy Alto", role: "Brand Lead" },
+      { name: "Tess Orin", role: "Head of Marketing" },
+      { name: "Nils Berg", role: "Risk Officer" },
     ]);
   });
 });
@@ -168,5 +171,139 @@ describe("client-view: project filtering", () => {
       projects: { id: string }[];
     };
     expect(one.projects.map((p) => p.id)).toEqual(["proj-widget"]);
+  });
+});
+
+/**
+ * Audience scoping is the multi-organisation half of the same safety boundary.
+ * The fixture is a real chain: Northwind Capacity above TestCo, two rival
+ * distribution brands (Brightline, Harbour Row) below it, and our own team
+ * alongside. The assertions that matter are again about absence — a brand must
+ * see neither its parent's material nor its sibling's.
+ */
+interface AudienceView {
+  audience: {
+    org: string;
+    name: string;
+    chain: { name: string; relation: string }[];
+    withheld: Record<string, number>;
+  };
+  people: { name: string }[];
+  projects: {
+    id: string;
+    requirements: { title: string }[];
+    decisions: { title: string }[];
+    scope: { in: string[] };
+  }[];
+  decisions: { title: string }[];
+  resolved_questions: unknown[];
+}
+
+const forAudience = (org: string, ...extra: string[]): AudienceView =>
+  JSON.parse(run("--json", "--audience", org, ...extra)) as AudienceView;
+
+describe("client-view: audience scoping across the value chain", () => {
+  const brand = forAudience("org-brightline");
+  const sibling = forAudience("org-harbour-row");
+  const partner = forAudience("org-testco");
+
+  it("names the audience and their own line of the chain", () => {
+    expect(brand.audience.name).toBe("Brightline");
+    expect(brand.audience.chain.map((c) => [c.name, c.relation])).toEqual([
+      ["Northwind Capacity", "above"],
+      ["TestCo", "above"],
+      ["Brightline", "self"],
+    ]);
+  });
+
+  it("never reveals a sibling brand to its rival", () => {
+    const raw = JSON.stringify(brand);
+    expect(raw).not.toContain("Harbour Row");
+    expect(raw).not.toContain("Tess Orin");
+    expect(raw).not.toContain("Pricing table on the quote page");
+    // …and symmetrically.
+    const other = JSON.stringify(sibling);
+    expect(other).not.toContain("Brightline");
+    expect(other).not.toContain("Remy Alto");
+    expect(other).not.toContain("Brand-specific checkout copy");
+  });
+
+  it("shows a brand only its own people and its own requirements", () => {
+    expect(brand.people.map((p) => p.name)).toEqual(["Remy Alto"]);
+    expect(brand.projects[0]!.requirements.map((r) => r.title)).toEqual([
+      "Brand-specific checkout copy",
+    ]);
+  });
+
+  it("withholds the partner's own material from a brand", () => {
+    const raw = JSON.stringify(brand);
+    // TestCo's people, their decisions, and the scope they set.
+    expect(raw).not.toContain("Ada Vance");
+    expect(raw).not.toContain("Annual vendor review");
+    expect(raw).not.toContain("No production data without a security review");
+    expect(raw).not.toContain("Reporting module");
+    // A tension between two TestCo people is TestCo's, even depersonalised.
+    expect(brand.resolved_questions).toEqual([]);
+    expect(raw).not.toContain("Speed vs spend");
+  });
+
+  it("withholds an upstream decision rather than inferring that it binds downward", () => {
+    // Northwind's quarterly reporting rule applies to Brightline in practice,
+    // but nobody from Brightline was party to it. Bindingness is not derivable
+    // from tier, so the tool declines to guess with a client's data.
+    expect(JSON.stringify(brand)).not.toContain("Quarterly risk reporting");
+    // The organisation that DID make it sees it.
+    const upstream = forAudience("org-northwind-capacity");
+    expect(upstream.decisions.map((d) => d.title)).toEqual([
+      "Quarterly risk reporting on the whole book",
+    ]);
+  });
+
+  it("reports what it withheld, so a partial view is not read as complete", () => {
+    expect(brand.audience.withheld["people"]).toBe(4);
+    // The sibling's, the partner's, and the unattributed one — an unowned
+    // requirement is withheld rather than guessed at.
+    expect(brand.audience.withheld["requirements"]).toBe(3);
+    expect(brand.audience.withheld["decisions"]).toBeGreaterThan(0);
+    expect(brand.audience.withheld["scope"]).toBe(2);
+    expect(brand.audience.withheld["resolved questions"]).toBe(1);
+  });
+
+  it("gives our counterparty their own material and nobody else's", () => {
+    expect(partner.people.map((p) => p.name)).toEqual(["Ada Vance", "Bo Reyes"]);
+    expect(partner.decisions.map((d) => d.title)).toEqual([
+      "No production data without a security review",
+      "Annual vendor review",
+    ]);
+    expect(partner.resolved_questions).toHaveLength(1);
+    expect(JSON.stringify(partner)).not.toContain("Quarterly risk reporting");
+  });
+
+  it("still excludes our own people under every audience", () => {
+    for (const v of [brand, sibling, partner]) {
+      expect(JSON.stringify(v)).not.toContain("Jules Marek");
+    }
+    const ours = forAudience("org-ours");
+    expect(ours.people).toEqual([]);
+  });
+
+  it("drops a project entirely when the audience has no stake in it", () => {
+    // org-ours has no client-side people, so the project is not even named.
+    const ours = forAudience("org-ours");
+    expect(ours.projects).toEqual([]);
+    expect(ours.audience.withheld["projects"]).toBe(1);
+  });
+
+  it("refuses an unknown audience rather than falling back to everyone", () => {
+    // A typo must not silently hand one organisation everyone else's material.
+    expect(() => run("--json", "--audience", "org-typo")).toThrow();
+  });
+
+  it("says in the Markdown who it was prepared for and what it left out", () => {
+    const md = run("--audience", "org-brightline");
+    expect(md).toContain("Prepared for Brightline");
+    expect(md).toContain("Northwind Capacity — Capacity provider (above)");
+    expect(md).toContain("Withheld as belonging to others");
+    expect(md).not.toContain("Harbour Row");
   });
 });

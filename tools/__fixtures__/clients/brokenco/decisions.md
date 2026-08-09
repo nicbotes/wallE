@@ -7,6 +7,7 @@ id: dec-20250901-time-traveller
 date: 2025-09-01
 status: active
 decided_by: [sh-cy-doe]
+authority: org-not-in-the-chain
 supersedes: null
 superseded_by: null
 source: drop-2024-03-15-workshop

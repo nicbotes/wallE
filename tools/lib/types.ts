@@ -13,11 +13,33 @@ export type Confidence = "high" | "medium" | "low";
 
 export type Side = "client" | "us" | "partner";
 
+/**
+ * Where an organisation sits in the engagement's value chain, relative to us.
+ * Structural and domain-agnostic — the domain's own word for it goes in `role`.
+ */
+export type Tier = "us" | "principal" | "upstream" | "downstream" | "peer";
+
+export interface Org {
+  id: string;
+  name: string;
+  tier: Tier;
+  /** The domain's own word: "capacity provider", "MGA", "distribution brand". */
+  role: string;
+  /** Who they sit under in the chain. Null/absent for the top of a chain. */
+  parent?: string | null;
+  status: "active" | "former";
+  first_seen: string;
+  last_confirmed: string;
+  sources: string[];
+}
+
 export interface Stakeholder {
   id: string;
   name: string;
   role: string;
   org_unit?: string;
+  /** Which organisation in the chain they belong to (see orgs.md). */
+  org?: string;
   /** Whose side they're on. Defaults to client; `us` is excluded from client views. */
   side?: Side;
   /** Speaker labels and email addresses this person appears under in drops. */
@@ -58,6 +80,8 @@ export interface Decision {
   date: string;
   status: "active" | "superseded";
   decided_by: string[];
+  /** Which organisation had the right to make this call (see orgs.md). */
+  authority?: string | null;
   supersedes?: string | null;
   superseded_by?: string | null;
   source: string;
@@ -179,6 +203,8 @@ export interface Brain {
   slug: string;
   root: string;
   profile: ClientProfile | null;
+  /** The organisations in the engagement's value chain. Empty for single-org brains. */
+  orgs: Org[];
   stakeholders: Stakeholder[];
   incentives: Incentive[];
   observations: Observation[];

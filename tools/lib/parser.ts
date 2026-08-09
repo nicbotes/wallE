@@ -18,6 +18,7 @@ import type {
   Incentive,
   LogEntry,
   Observation,
+  Org,
   Project,
   ProjectCharter,
   Requirement,
@@ -180,6 +181,7 @@ export function parseBrain(clientsDir: string, slug: string): Brain {
     : null;
   if (!profileMd) errors.push("client.md: missing");
 
+  const orgs = asEntities<Org>(blocksFrom(root, "orgs.md", errors));
   const stakeholders = asEntities<Stakeholder>(blocksFrom(root, "stakeholders.md", errors));
   const incentives = asEntities<Incentive>(blocksFrom(root, "incentives.md", errors));
   const observations = asEntities<Observation>(blocksFrom(root, "observations.md", errors));
@@ -232,6 +234,7 @@ export function parseBrain(clientsDir: string, slug: string): Brain {
     slug,
     root,
     profile,
+    orgs,
     stakeholders,
     incentives,
     observations,
@@ -248,6 +251,7 @@ export function parseAllBlocks(clientsDir: string, slug: string): EntityBlock[] 
   const root = path.join(clientsDir, slug);
   const errors: string[] = [];
   const rels = [
+    "orgs.md",
     "stakeholders.md",
     "incentives.md",
     "observations.md",

@@ -21,6 +21,7 @@ const DROP_TYPES = [
 ];
 const SOURCE_TOOLS = ["fathom", "gemini", "otter", "zoom", "manual", "other"];
 const SIDES = ["client", "us", "partner"];
+const TIERS = ["us", "principal", "upstream", "downstream", "peer"];
 const OBSERVATION_KINDS = ["context", "relationship", "process", "preference", "constraint"];
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -73,6 +74,7 @@ export function validateBrain(brain: Brain, repoDir = process.cwd()): Validation
   };
 
   const shIds = new Set(brain.stakeholders.map((s) => s.id));
+  const orgIds = new Set(brain.orgs.map((o) => o.id));
   const dropIds = new Set(brain.drops.map((d) => d.id));
   const decisionsEverywhere = [
     ...brain.decisions.map((d) => ({ d, file: "decisions.md" })),
@@ -104,6 +106,11 @@ export function validateBrain(brain: Brain, repoDir = process.cwd()): Validation
     }
     if (v === "manual") return; // brain-init
     if (!dropIds.has(String(v))) errors.push(`${where}: ${field} "${v}" is not a known drop`);
+  };
+  const refOrg = (v: unknown, where: string, field: string) => {
+    if (v === null || v === undefined || v === "") return;
+    if (!orgIds.has(String(v)))
+      errors.push(`${where}: ${field} "${v}" is not a known organisation`);
   };
   const oneOf = (v: unknown, set: string[], where: string, field: string) => {
     if (!set.includes(String(v))) errors.push(`${where}: ${field} "${v}" not in [${set.join("|")}]`);
@@ -162,6 +169,52 @@ export function validateBrain(brain: Brain, repoDir = process.cwd()): Validation
     }
   }
 
+  // --- organisations (the value chain) ---------------------------------------
+  for (const o of brain.orgs) {
+    const where = `orgs.md (${o.id})`;
+    if (!o.id?.startsWith("org-")) errors.push(`${where}: id must start with org-`);
+    if (!o.name) errors.push(`${where}: missing name`);
+    if (!o.role) errors.push(`${where}: missing role`);
+    oneOf(o.tier, TIERS, where, "tier");
+    oneOf(o.status, ["active", "former"], where, "status");
+    if (o.parent) {
+      if (o.parent === o.id) errors.push(`${where}: parent is itself`);
+      else refOrg(o.parent, where, "parent");
+    }
+    refDrop(o.first_seen, where, "first_seen");
+    date(o.last_confirmed, where, "last_confirmed");
+    for (const src of o.sources ?? []) refDrop(src, where, "sources");
+  }
+
+  // We are one organisation. Two `tier: us` entries means the chain has been
+  // mismodelled, and everything keyed off it (audience scoping, side checks)
+  // would silently pick one.
+  const usOrgs = brain.orgs.filter((o) => o.tier === "us");
+  if (usOrgs.length > 1)
+    errors.push(
+      `orgs.md: ${usOrgs.length} organisations have tier "us" (${usOrgs
+        .map((o) => o.id)
+        .join(", ")}) — exactly one may`,
+    );
+
+  // A parent chain must terminate. A cycle would hang org-chart.ts and makes
+  // "who is above whom" unanswerable.
+  const parentOf = new Map(brain.orgs.map((o) => [o.id, o.parent ?? null]));
+  for (const o of brain.orgs) {
+    const seenIds = new Set<string>([o.id]);
+    let cur = parentOf.get(o.id) ?? null;
+    while (cur && parentOf.has(cur)) {
+      if (seenIds.has(cur)) {
+        errors.push(`orgs.md (${o.id}): parent chain is cyclic (via ${cur})`);
+        break;
+      }
+      seenIds.add(cur);
+      cur = parentOf.get(cur) ?? null;
+    }
+  }
+
+  const orgTier = new Map(brain.orgs.map((o) => [o.id, o.tier]));
+
   // --- stakeholders ----------------------------------------------------------
   for (const s of brain.stakeholders) {
     const where = `stakeholders.md (${s.id})`;
@@ -169,6 +222,21 @@ export function validateBrain(brain: Brain, repoDir = process.cwd()): Validation
     if (!s.name) errors.push(`${where}: missing name`);
     if (!s.role) errors.push(`${where}: missing role`);
     if (s.side !== undefined) oneOf(s.side, SIDES, where, "side");
+    refOrg(s.org, where, "org");
+    // `side` predates `org`, so a disagreement is a gap to reconcile rather
+    // than a broken brain — but it matters: client-view excludes our own
+    // people, and it reads both signals precisely because they can drift.
+    if (s.org && s.side && orgTier.has(s.org)) {
+      const tier = orgTier.get(s.org)!;
+      if (tier === "us" && s.side !== "us")
+        warnings.push(
+          `${where}: belongs to ${s.org} (tier: us) but side is "${s.side}" — one of them is wrong`,
+        );
+      if (tier !== "us" && s.side === "us")
+        warnings.push(
+          `${where}: side is "us" but ${s.org} has tier "${tier}" — one of them is wrong`,
+        );
+    }
     if (s.aliases !== undefined && !Array.isArray(s.aliases))
       errors.push(`${where}: aliases must be a list`);
     oneOf(s.status, ["active", "departed"], where, "status");
@@ -230,6 +298,7 @@ export function validateBrain(brain: Brain, repoDir = process.cwd()): Validation
     oneOf(d.status, ["active", "superseded"], where, "status");
     if (!Array.isArray(d.decided_by)) errors.push(`${where}: decided_by must be a list`);
     else for (const sh of d.decided_by) refSh(sh, where, "decided_by");
+    refOrg(d.authority, where, "authority");
     refDrop(d.source, where, "source");
     notAfterSource(d.date, d.source, where, "date");
     checkTopics(d.topics, where);
@@ -364,6 +433,7 @@ export function validateBrain(brain: Brain, repoDir = process.cwd()): Validation
 
   // --- duplicate ids across the whole brain -----------------------------------
   const allIds = [
+    ...brain.orgs.map((x) => x.id),
     ...brain.stakeholders.map((x) => x.id),
     ...brain.incentives.map((x) => x.id),
     ...brain.observations.map((x) => x.id),

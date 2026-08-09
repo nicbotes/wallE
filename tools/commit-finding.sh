@@ -12,7 +12,7 @@
 #    (we learned something old). See schema/SCHEMA.md "Two clocks".
 set -euo pipefail
 
-TYPES="brain-init drop stakeholder-new stakeholder-update incentive-new incentive-update observation-new observation-update requirement-new requirement-update decision-new decision-superseded scope-move tension-opened tension-resolved project-new project-update log-entry confirm correction domain-attach"
+TYPES="brain-init drop org-new org-update stakeholder-new stakeholder-update incentive-new incentive-update observation-new observation-update requirement-new requirement-update decision-new decision-superseded scope-move tension-opened tension-resolved project-new project-update log-entry confirm correction domain-attach"
 
 CLIENT="" TYPE="" ENTITY="" SOURCE="" PROJECT="" ATTR="" REFS="" SUMMARY="" BODY="" BACKFILL=""
 while getopts "c:t:e:s:p:a:r:m:b:B" flag; do

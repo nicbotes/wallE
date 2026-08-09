@@ -5,6 +5,8 @@ import { execFileSync } from "node:child_process";
 export const FINDING_TYPES = [
   "brain-init",
   "drop",
+  "org-new",
+  "org-update",
   "stakeholder-new",
   "stakeholder-update",
   "incentive-new",

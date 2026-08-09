@@ -11,6 +11,8 @@ understanding; these commits are its records.
 | --- | --- |
 | `brain-init` | Client brain scaffolded from template |
 | `drop` | Raw input saved verbatim — **always the first commit of an ingest** |
+| `org-new` | New organisation in the engagement's value chain |
+| `org-update` | Tier, role, parent, or status change (incl. an org leaving the chain) |
 | `stakeholder-new` | New person identified |
 | `stakeholder-update` | Any field change: role, disposition, reports_to, departure |
 | `incentive-new` | New stated or inferred motive |
@@ -91,9 +93,10 @@ cases need care:
 ## Ingest ordering (per drop)
 
 1. **`drop` commit first** — the raw input, verbatim, before any extraction.
-2. Findings in dependency order: stakeholders before anything attributed to
-   them; `project-new` before its scope/requirements; `decision-new`/
-   `decision-superseded` before a `tension-resolved` that cites it.
+2. Findings in dependency order: organisations before the people who belong to
+   them; stakeholders before anything attributed to them; `project-new` before
+   its scope/requirements; `decision-new`/`decision-superseded` before a
+   `tension-resolved` that cites it.
 3. At most one `confirm` commit last.
 
 All commits from one ingest share the same `Source:` trailer, so

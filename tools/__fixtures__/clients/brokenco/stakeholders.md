@@ -6,6 +6,7 @@
 id: sh-cy-doe
 name: Cy Doe
 role: COO
+org: org-vanished
 side: theirs
 aliases: ["Cy", "CD"]
 status: active
@@ -30,6 +31,7 @@ Missing the yaml block entirely.
 id: sh-alias-thief
 name: Alias Thief
 role: Unknown
+org: org-first-us
 side: client
 aliases: ["Cy", "at@brokenco.example"]
 status: active
