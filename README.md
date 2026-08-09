@@ -36,6 +36,82 @@ with the person. This repo captures it instead:
 - **Quality** — a synthetic corpus with golden facts and an eval harness keep
   the extraction skills honest and catch regressions when prompts change.
 
+## How it works
+
+Raw material goes in once and is never touched again. Everything else is
+derived from it — which is why the brain can be rebuilt, and why nothing is
+ever lost by curating it.
+
+```mermaid
+flowchart LR
+    RAW["Raw input<br/>transcript · email<br/>notes · incident"]
+
+    subgraph LOG["Event log — immutable"]
+        DROP["drops/*.md<br/>verbatim<br/>one commit each"]
+    end
+
+    subgraph OUT["Projection — curated"]
+        PROJ["stakeholders · incentives<br/>observations · decisions<br/>tensions · scope · requirements"]
+    end
+
+    subgraph HIST["Changelog — how understanding moved"]
+        GIT["one commit per finding<br/>machine-readable trailers"]
+    end
+
+    ASK["brain-recall · brain-diff<br/>brain-onboard · brain-audit"]
+
+    RAW --> DROP
+    DROP -->|brain-ingest| PROJ
+    DROP -->|brain-ingest| GIT
+    PROJ --> ASK
+    GIT --> ASK
+
+    style LOG fill:#eef6ff,stroke:#4a7fb5
+    style OUT fill:#f3fbf940,stroke:#3f9e7c
+    style HIST fill:#fdf6ec40,stroke:#c08a3e
+```
+
+**The two clocks.** A drop's date is when the meeting happened; an entity's date
+is when the *thing* happened. Those come apart the moment someone explains
+history — and backfilled context is live context, not a footnote:
+
+```mermaid
+flowchart LR
+    subgraph EVENT["Event time — when it happened"]
+        E1["2021<br/>CRM programme fails<br/><i>explains the CFO's scepticism</i>"]
+        E2["Feb 2022<br/>board sets a security gate<br/><i>still governs us today</i>"]
+    end
+
+    subgraph KNOW["Knowledge time — when we learned it"]
+        D["Jan 2026<br/>handover meeting"]
+    end
+
+    D -.->|"Backfill: true"| E1
+    D -.->|"Backfill: true"| E2
+
+    style EVENT fill:#f3fbf940,stroke:#3f9e7c
+    style KNOW fill:#eef6ff,stroke:#4a7fb5
+```
+
+## Anatomy of a brain
+
+Org-level facts sit at the root because people outlive projects; delivery facts
+live per project. Only `drops/` is source truth — everything beside it is a
+projection of it.
+
+```mermaid
+flowchart TD
+    ROOT["clients/meridian-energy/"]
+    ROOT --> PROFILE["client.md<br/>profile · attached domains · reading order"]
+    ROOT --> ORG["stakeholders.md · incentives.md<br/>observations.md · tensions.md · decisions.md<br/><i>org-level — spans projects</i>"]
+    ROOT --> DROPS["drops/<br/><b>the event log</b><br/>18 raw inputs, verbatim"]
+    ROOT --> PROJECTS["projects/"]
+    PROJECTS --> P1["billing-replatform/<br/>project · scope · requirements<br/>decisions · log"]
+    PROJECTS --> P2["customer-portal/<br/>project · scope · requirements<br/>decisions · log"]
+
+    style DROPS fill:#eef6ff,stroke:#4a7fb5,stroke-width:2px
+```
+
 ## Install (macOS + Linux)
 
 | Dependency | macOS | Linux | Why |
@@ -77,10 +153,43 @@ drop by drop, and every step of that growth is a commit you can revisit.
 ## Quality: evals
 
 The extraction skills are graded, not vibes-checked. `eval/corpus/` contains a
-fictional client (**Meridian Energy**, 2 simulated years, 16 drops: kickoffs,
-reversals, departures, incidents, restructures) authored so every expected fact
-is objectively identifiable. The harness replays drops through the real ingest
-skill in a hermetic sandbox and grades the resulting brain + git log:
+fictional client — **Meridian Energy**, a utility, 18 drops across two simulated
+years — authored so every expected fact is objectively identifiable, wrapped in
+realistic noise including red herrings that must *not* become findings.
+
+The storyline is chosen to exercise exactly the things a naive summariser gets
+wrong: a decision reversed months later, a champion leaving, an outage that
+flips someone's disposition, a deadlock that stays open for sixteen months, and
+history arriving two years late.
+
+```mermaid
+timeline
+    title Meridian Energy — what the corpus makes the agent handle
+    section 2024
+        Jan : Kickoff — 3 stakeholders, scope agreed
+            : Requirements — one deliberately unattributed
+        Feb : Decision — self-hosted Postgres
+            : Tension opened — budget vs speed
+        May : Tension opened — cutover vs overtime
+        Jun : Outage — Dana turns sceptical
+        Jul : REVERSAL — managed cloud supersedes Feb
+            : Budget-vs-speed tension resolved
+        Sep : Champion departs — sceptical successor arrives
+        Oct : Scope cut — an earlier requirement dropped
+        Dec : Phase change — build to migrate
+    section 2025
+        Jan : Second project — cross-project tension
+        Mar : Restructure — successor turns supportive
+        Jul : Portal incident — SSO decision
+        Sep : Cutover tension RESOLVED after 16 months
+        Nov : Replatform delivered
+    section 2026
+        Jan : BACKFILL — a 2021 failure explains everything
+        Feb : Raw transcript — both sides in the room
+```
+
+The harness replays these drops through the real ingest skill in a hermetic
+sandbox and grades the resulting brain + git log:
 
 ```bash
 npx vitest run --project unit       # tool tests — no API key needed
