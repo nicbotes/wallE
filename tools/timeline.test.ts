@@ -14,6 +14,8 @@ interface Row {
   learned?: string;
   source?: string;
   project?: string;
+  topics: string[];
+  supersedes?: string;
 }
 
 function timeline(...extra: string[]): Row[] {
@@ -59,6 +61,23 @@ describe("timeline (event time, not knowledge time)", () => {
     ]) {
       expect(kinds, `missing kind ${k}`).toContain(k);
     }
+  });
+
+  it("filters by topic, keeping only tagged entities", () => {
+    const tagged = timeline("--topic", "concern:delivery");
+    expect(tagged.map((r) => r.id)).toEqual(["dec-20240301-phased-rollout"]);
+    // A free-form topic works the same way.
+    expect(timeline("--topic", "audit-evidence-format").map((r) => r.id)).toContain(
+      "req-audit-trail",
+    );
+    // An unused topic yields nothing rather than everything.
+    expect(timeline("--topic", "line:motor")).toEqual([]);
+  });
+
+  it("carries topics and supersession links on rows", () => {
+    const dec = rows.find((r) => r.id === "dec-20240301-phased-rollout")!;
+    expect(dec.topics).toContain("concern:delivery");
+    expect(dec.supersedes).toBe("dec-20240105-big-bang");
   });
 
   it("filters by date range, project and backfill", () => {

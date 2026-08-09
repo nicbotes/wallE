@@ -16,7 +16,7 @@ source: drop-2024-02-10-scope-review
 
 ## Undecided
 
-## Mobile app (scp-mobile-app)
+## Mobile app & <beta> access (scp-mobile-app)
 
 ```yaml
 id: scp-mobile-app
