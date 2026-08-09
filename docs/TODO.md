@@ -106,19 +106,21 @@ never executed. Needs a cached `after-18` state from a full ingest run.
 
 ## 3. Designed, not built
 
-### 3.1 Client-safe story mode
-Clients ask "why is it this way?" — new staff, short memories. The brain already
-holds the causal chain (decisions + supersessions + tensions + two clocks), so
-the narrative is latent in the data.
+### 3.1 Client-safe view — ✅ built, one gap remains
+`tools/client-view.ts` + the `brain-brief` skill. The filter is enforced in
+code (a prompt rule is a promise; a function that never emits the field is a
+boundary) and tested against a fixture deliberately loaded with damaging
+material.
 
-**The filter is a safety feature, not formatting.** A client-facing story must
-never surface inferred incentives, stakeholder dispositions, or unresolved
-tensions between named individuals — that content is career-damaging if it
-leaks into a deck. Same brain, two rendering profiles, and the boundary needs
-its own test because the failure is silent.
-
-*Done when:* a `brain-story` skill produces a topic-scoped narrative for an
-external audience, with a tested hard filter.
+**The residual gap: prose.** Structured fields are filtered exhaustively, but
+decision rationale is our own writing and passes through. The tool flags
+passages that read like internal framing ("won the argument", "pushed back")
+and refuses to declare the output client-ready until a human has looked — but
+that heuristic will miss things. Two ways to close it further:
+- Have `brain-ingest` write decision rationale in neutral language from the
+  start, so the client-facing path has less to sanitise.
+- Grade it: an eval that feeds a brain to `client-view` and has a judge check
+  for anything a client shouldn't read.
 
 ### 3.2 Topic-filtered timeline + visual
 `tools/timeline.ts` already emits event-ordered JSON with backfill marking. Add
@@ -126,7 +128,7 @@ external audience, with a tested hard filter.
 supersessions drawn as replacements (the visually striking bit), tensions
 opening and closing, scope moves, annotated with who drove each.
 
-### 3.3 Positions under tensions (IBIS)
+### 3.3 Positions under tensions (IBIS) — now the biggest single win
 Tensions currently record the parties, not what each argued. Recording each
 stakeholder's *position* is a small schema change that makes "why" narratives
 substantially richer — this is the IBIS model (Issues → Positions → Arguments),

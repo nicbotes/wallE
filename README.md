@@ -112,6 +112,52 @@ flowchart TD
     style DROPS fill:#eef6ff,stroke:#4a7fb5,stroke-width:2px
 ```
 
+## Prior art — what we took, and what we didn't
+
+Most of this design has been invented before, and it's worth being explicit
+about which parts are borrowed, which were deliberately left on the shelf, and
+where taking more would actually help.
+
+| Body of work | What we use | What we skipped | Would more help? |
+| --- | --- | --- | --- |
+| **IBIS** (Rittel & Kunz, 1970) | The *shape*: a tension is an Issue held open until something resolves it, with `resolved_by` pointing at the resolving decision. | **Positions and Arguments.** A tension records `between: [a, b]` plus prose — who argued *what* is unstructured. | **Yes — the biggest single win available.** Structured positions turn "these two disagreed" into "A argued X because Y; B argued Z; the decision chose…", which is exactly what "why is it this way" needs. See [`docs/TODO.md`](docs/TODO.md) 3.3. |
+| **SKOS** (W3C) | `label` / `alt:` on spine terms are `prefLabel` / `altLabel`. That pair does most of the work — it's how "cover", "coverage" and "benefit" collapse to one term. | `broader`/`narrower` (facets are deliberately flat), `related`, URIs, `exactMatch`. | Partly. Per-term `definition` is cheap and would disambiguate for the tagging agent. Shallow `broader` only once a facet outgrows ~15 terms. `exactMatch` to ACORD only if integrating with insurer systems. |
+| **ADR** (Nygard, 2011) | `decisions.md` with supersession chains already *is* an architecture-decision log. | Nothing meaningful. | No — we have the useful part. Naming it just makes the convention recognisable. |
+| **PROV-O** (W3C) | The model: `source`/`sources` and attribution map onto `wasDerivedFrom` / `wasAttributedTo`. | The actual RDF vocabulary and URIs. | Only if federating or exporting provenance to another system. |
+| **Bitemporal modelling** (Snodgrass; Datomic) | "Two clocks" is valid time vs transaction time. | Formal temporal query operators. | No — the two date fields carry it. Reassuring that it's a known-good pattern rather than an invention. |
+
+### Why not topic modelling (BERTopic, LDA)?
+
+A reasonable question, since "discover the topics from the corpus" sounds like
+exactly what we want. It's a deliberate no, for five reasons:
+
+1. **Wrong corpus size.** Topic models need hundreds to thousands of documents
+   to produce stable clusters. A client brain has *tens* of drops. On a corpus
+   this small the clusters are noise dressed as structure.
+2. **Instability breaks the whole thesis.** Re-fitting after each new drop
+   re-shapes and re-numbers topics. Ours are **stable identifiers** that
+   entities reference and that git diffs meaningfully — a topic that silently
+   changes meaning between runs destroys time-travel.
+3. **Clusters aren't editable.** The premise is human-curatable files. A
+   consultant can hand-correct `component:coverage`; nobody can hand-correct
+   cluster 7.
+4. **Wrong unit.** It clusters *documents*; we tag *entities*. One meeting
+   yields a decision, two requirements and an observation, each on different
+   topics.
+5. **No cross-client vocabulary.** Per-client fits aren't comparable, and
+   comparability is the entire point of the controlled half.
+
+At our scale the LLM reading the drop does this better anyway — it assigns a
+controlled term or invents a sensible slug *with the source in hand*, which is
+ontology learning done at the point of extraction with far better semantics
+than distance in embedding space.
+
+**Where it would earn its place:** clustering free-form topic *strings* across
+many clients, as a reconciliation aid — proposing that `billing-run`,
+`billing-runs` and `the-billing-run` are one term. That's the job
+`tools/spine.ts candidates` does crudely by exact match today, and the natural
+upgrade once there are enough clients for clustering to mean anything.
+
 ## Install (macOS + Linux)
 
 | Dependency | macOS | Linux | Why |
@@ -149,6 +195,36 @@ Open this repo in Claude Code. The skills load automatically:
 
 A new client starts with **capability but no context** — understanding grows
 drop by drop, and every step of that growth is a commit you can revisit.
+
+### Two audiences, one brain
+
+A brain holds our read on people — dispositions, inferred motives, who is
+blocking whom. That is what makes it useful internally and what must never
+reach a client. The failure is silent: nobody notices until it's in a deck.
+
+So the boundary is **code, not care**. `tools/client-view.ts` emits only the
+safe subset, and **brain-brief** is the client-facing skill that consumes it —
+it never reads the brain files directly, because that would reintroduce exactly
+the judgement the tool removes.
+
+| | Internal | Client-facing |
+| --- | --- | --- |
+| Skills | `brain-recall` · `brain-diff` · `brain-onboard` · `brain-audit` | `brain-brief` |
+| People | disposition, influence, trajectory | name and role only; our own team excluded |
+| Motives | stated *and* inferred, with confidence | none |
+| Observations | how to handle the room | none |
+| Tensions | open and resolved, with parties named | resolved only, depersonalised — open withheld unless explicitly requested |
+| Decisions, requirements, scope, delivery | ✓ | ✓ |
+
+Structured fields are filtered exhaustively. **Prose is not** — decision
+rationale is our own writing, so the tool flags passages that read like
+internal framing ("won the argument", "pushed back") and refuses to call the
+output client-ready until a human has looked at them.
+
+```bash
+npx tsx tools/client-view.ts acme-utilities            # Markdown, with review flags
+npx tsx tools/client-view.ts acme-utilities --json     # for a UI
+```
 
 ## Quality: evals
 
@@ -233,9 +309,11 @@ CLAUDE.md            operating instructions for the agent
 docs/PLAN.md         the full build plan & design rationale
 docs/TODO.md         backlog — led by validating all of this against real transcripts
 schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) · templates/
-.claude/skills/      brain-init · brain-ingest · brain-recall · brain-diff · brain-audit · brain-onboard
+.claude/skills/      brain-init · brain-ingest · brain-recall · brain-diff
+                     brain-audit · brain-onboard · brain-domain · brain-brief
 domains/             domain packs — the thin controlled vocabulary for topics
-tools/               validate · query-log · timeline · staleness · search · speakers · stats · spine · commit-finding.sh
+tools/               validate · query-log · timeline · staleness · search · speakers
+                     stats · spine · client-view · commit-finding.sh
 clients/             one brain per client (ships empty)
 eval/                corpus · goldens · harness · committed score reports
 ```

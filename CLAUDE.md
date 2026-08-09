@@ -14,7 +14,7 @@ capabilities.
 - `domains/` — domain packs: the thin controlled vocabulary ("spine") topics
   are tagged against. Capability, never client content. See `domains/README.md`.
 - `tools/` — deterministic helpers (validate, query-log, timeline, staleness,
-  search, speakers, stats, spine, commit-finding.sh). Run TypeScript tools with
+  search, speakers, stats, spine, client-view, commit-finding.sh). Run TypeScript tools with
   `npx tsx tools/<name>.ts`.
 - `eval/` — synthetic corpus + goldens + harness that grade the extraction
   skills. **Never read `eval/` when doing real client work** — it is quality
@@ -32,10 +32,13 @@ capabilities.
    commit are when we *learned* it. Backstory told late is dated to the past
    and marked `Backfill: true` — it becomes live context immediately, never a
    git-history footnote.
-7. **Transcripts:** resolve every speaker label before extracting
+7. **Client-facing output goes through `tools/client-view.ts`**, never
+   straight from the brain files. Dispositions, inferred motives and open
+   tensions are internal-only; the filter is code, not care.
+8. **Transcripts:** resolve every speaker label before extracting
    (`tools/speakers.ts`); our own people are `side: us` and never client
    stakeholders; durable "good to know" becomes an observation, not noise.
-8. After changing a brain, run `npx tsx tools/validate.ts <client-slug>`.
+9. After changing a brain, run `npx tsx tools/validate.ts <client-slug>`.
 
 ## Which skill when
 
@@ -47,6 +50,7 @@ capabilities.
 | "What changed since…" | `brain-diff` |
 | Hygiene check (stale facts, broken refs, unlogged contradictions) | `brain-audit` |
 | "Read me into this client" | `brain-onboard` |
+| Output going TO THE CLIENT (status, decision history, "why is it this way") | `brain-brief` |
 | New industry, or topics not resolving | `brain-domain` |
 
 ## Development
