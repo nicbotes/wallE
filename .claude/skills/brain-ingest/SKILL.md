@@ -105,6 +105,12 @@ While drafting:
 - **A resolved tension** references the resolving decision (`resolved_by`), so
   the decision's finding must come first.
 - **Contradictions between stakeholders** in this drop = `tension-opened`.
+  **Record what each side argued**, not just who was involved — `positions:`
+  with one sentence per party, in *their* terms and reasoning, never your
+  verdict on who is right. This is the difference between "these two disagreed"
+  and an answer to "why is it this way", and it is far easier to capture now
+  than to reconstruct later. If a drop reveals a position on an existing
+  tension, that is a `tension-opened`-style update to the entry.
 - **Re-confirmations** (existing fact restated, nothing changed) go in one
   batch: collect entity IDs for a single `confirm` commit at the end.
 - **Most of a transcript is discussion, not findings — and some of it is still

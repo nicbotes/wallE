@@ -272,6 +272,35 @@ export function validateBrain(brain: Brain, repoDir = process.cwd()): Validation
     refDrop(t.source, where, "source");
     notAfterSource(t.opened, t.source, where, "opened");
     checkTopics(t.topics, where);
+
+    // IBIS positions: who argued what. Optional (older entries predate the
+    // field), so a missing set is a gap to chase, not a defect.
+    if (t.positions !== undefined) {
+      if (!Array.isArray(t.positions)) {
+        errors.push(`${where}: positions must be a list`);
+      } else {
+        for (const [i, p] of t.positions.entries()) {
+          const pw = `${where} position[${i}]`;
+          if (!p || typeof p !== "object") {
+            errors.push(`${pw}: must be an object with stakeholder and summary`);
+            continue;
+          }
+          if (!p.stakeholder) errors.push(`${pw}: missing stakeholder`);
+          else refSh(p.stakeholder, pw, "stakeholder");
+          if (!p.summary) errors.push(`${pw}: missing summary`);
+        }
+        const parties = new Set(Array.isArray(t.between) ? t.between : []);
+        for (const p of t.positions) {
+          if (p?.stakeholder && parties.size && !parties.has(p.stakeholder))
+            errors.push(`${where}: position by "${p.stakeholder}" who is not listed in between`);
+        }
+      }
+    } else if (Array.isArray(t.between) && t.between.length >= 2) {
+      warnings.push(
+        `${where}: no positions recorded — what each side argued is the most ` +
+          `useful part of a tension; capture it while someone remembers`,
+      );
+    }
     if (t.status === "resolved") {
       date(t.resolved, where, "resolved");
       if (t.resolved_by && !decIds.has(t.resolved_by))

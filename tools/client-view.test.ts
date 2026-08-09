@@ -28,8 +28,8 @@ const json = JSON.parse(run("--json")) as {
   people: { name: string; role: string }[];
   projects: { decisions: unknown[]; requirements: unknown[]; scope: { in: string[] } }[];
   decisions: { title: string; replaces: string | null }[];
-  resolved_questions: { question: string }[];
-  open_questions?: unknown[];
+  resolved_questions: { question: string; considerations: string[] }[];
+  open_questions?: { question: string; considerations: string[] }[];
   review_required: { where: string; signal: string; text: string }[];
 };
 
@@ -109,13 +109,27 @@ describe("client-view: tensions are depersonalised", () => {
         opened: "2024-01-05",
         resolved: "2024-03-01",
         resolved_by: "Phased rollout",
+        considerations: [
+          "Wants everything live at once so the platform story lands in one go.",
+          "Wants spend gated per phase after being burned by the last vendor.",
+        ],
       },
     ]);
+  });
+
+  it("carries the substance of each position WITHOUT who argued it", () => {
+    // The IBIS payoff: a client can be told what was weighed, not who fought.
+    const q = json.resolved_questions[0]!;
+    expect(q.considerations).toHaveLength(2);
+    expect(JSON.stringify(q)).not.toContain("stakeholder");
+    expect(JSON.stringify(q)).not.toContain("sh-");
+    expect(markdown).toContain("considered: Wants everything live at once");
   });
 
   it("never says who was on which side", () => {
     expect(markdown).not.toContain("Ada wanted big-bang");
     expect(JSON.stringify(json)).not.toContain("between");
+    expect(JSON.stringify(json)).not.toContain("positions");
   });
 
   it("withholds open tensions by default", () => {

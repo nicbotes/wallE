@@ -49,6 +49,11 @@ So the boundary is **enforced in code, not by care**:
    - **Decision history** — decisions in event order with their supersession
      chains. This is usually what "why is it this way?" actually wants: the
      *sequence*, showing what was decided, what replaced it, and when.
+   - **Trade-offs** — `resolved_questions` carries `considerations`: what was
+     argued, already stripped of who argued it. Present these on their merits
+     ("one side needed a single training event; the other could not fund
+     overtime") — it is the honest answer to "why is it this way" without
+     putting anyone's name against a position.
    - **Story** — the narrative version: what we set out to do, what changed
      along the way, where it landed. Use `npx tsx tools/timeline.ts <slug>` for
      the event-time ordering, and remember backfilled history belongs at the

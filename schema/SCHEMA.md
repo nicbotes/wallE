@@ -267,13 +267,32 @@ chases it. Never drop a requirement because nobody owned it.
 id: ten-rollout-pace
 status: open                    # open | resolved
 between: [sh-kai-ito, sh-bo-reyes]   # stakeholder ids
+positions:                      # ? what each side actually argued
+  - stakeholder: sh-kai-ito
+    summary: Wants every branch live before the quarter ends, so training runs once.
+  - stakeholder: sh-bo-reyes
+    summary: Will not fund overtime; wants the rollout stretched across two quarters.
 opened: 2024-04-03
 source: drop-2024-04-03-workshop
 resolved: null                  # ? date
 resolved_by: null               # ? decision id
 ```
 
-Prose: the contradiction, each side's position, what it blocks.
+Prose: the contradiction in context, and what it blocks.
+
+**`positions` is the IBIS piece** (Issue → Positions → Arguments). Recording
+*who argued what*, not merely who was involved, is what turns "these two
+disagreed" into a usable answer to "why is it this way". Each `summary` is one
+sentence in that person's terms — their reasoning, not our verdict on it.
+
+It is optional, so brains written before the field stay valid; the validator
+warns when a tension has two or more parties and no positions, because that's a
+gap worth filling while someone still remembers.
+
+Positions also make the **client-facing** view better, not worse: the trade-off
+can be presented on its merits — "one side needed a single training event, the
+other could not fund overtime" — with `tools/client-view.ts` stripping the
+names. Substance without politics.
 
 ### Scope item (`projects/<p>/scope.md`)
 

@@ -78,6 +78,18 @@ describe("parseBrain on the testco fixture", () => {
     expect(ours.side).toBe("us");
   });
 
+  it("reads tension positions (IBIS)", () => {
+    const t = brain.tensions.find((x) => x.id === "ten-speed-vs-spend")!;
+    expect(t.positions).toHaveLength(2);
+    expect(t.positions![0]).toEqual({
+      stakeholder: "sh-ada-vance",
+      summary: "Wants everything live at once so the platform story lands in one go.",
+    });
+    // A tension without positions parses fine — the field is optional.
+    expect(brain.tensions.find((x) => x.id === "ten-dashboard-ownership")!.positions)
+      .toBeUndefined();
+  });
+
   it("reads observations, including org-scoped ones", () => {
     expect(brain.observations.map((o) => o.id).sort()).toEqual([
       "obs-ada-opens-with-roadmap", "obs-budget-cycle-locks-march",

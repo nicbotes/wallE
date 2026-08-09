@@ -77,10 +77,18 @@ export interface Requirement {
   topics?: string[];
 }
 
+/** IBIS Position: what one party actually argued, in their terms. */
+export interface Position {
+  stakeholder: string;
+  summary: string;
+}
+
 export interface Tension {
   id: string;
   status: "open" | "resolved";
   between: string[];
+  /** What each side argued — the IBIS piece. Optional; older entries lack it. */
+  positions?: Position[];
   opened: string;
   source: string;
   resolved?: string | null;

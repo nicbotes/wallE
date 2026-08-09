@@ -6,6 +6,11 @@
 id: ten-speed-vs-spend
 status: resolved
 between: [sh-ada-vance, sh-bo-reyes]
+positions:
+  - stakeholder: sh-ada-vance
+    summary: Wants everything live at once so the platform story lands in one go.
+  - stakeholder: sh-bo-reyes
+    summary: Wants spend gated per phase after being burned by the last vendor.
 opened: 2024-01-05
 source: drop-2024-01-05-kickoff
 resolved: 2024-03-01

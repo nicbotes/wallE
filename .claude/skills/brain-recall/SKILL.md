@@ -18,7 +18,10 @@ is to serve it up with provenance.
 - **Distinguish stated from inferred** — incentives carry `kind` and
   `confidence`; never present an inference as a fact.
 - **Surface tensions, don't smooth them.** If the question touches an area
-  with an open tension, say so explicitly.
+  with an open tension, say so explicitly — and give the **positions**: what
+  each side actually argued. "They disagree about cutover" is nearly useless;
+  "Ops needs zero downtime, Finance won't fund overtime" tells you how to walk
+  into the room.
 - **Client-only by default.** Stakeholder counts, "who's who" and meeting prep
   cover `side: client` (and `partner` where relevant). People marked `side: us`
   are our own team — they exist so speaker labels resolve, not to pad the

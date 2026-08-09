@@ -35,8 +35,10 @@ built so a newcomer can operate credibly by the end of it.
    after the event, say so once ("we only learned this in March") — a newcomer
    should know which parts of the story we watched and which we were told.
 
-5. **Live tensions** — every open one: who vs who, about what, what it
-   blocks. These are the rooms the newcomer will walk into.
+5. **Live tensions** — every open one: who vs who, **what each side argued**
+   (the `positions`), and what it blocks. The positions are the part that makes
+   this actionable — they tell a newcomer what they'll be walking into and
+   which arguments have already been made.
 
 5b. **How this org actually works** — the observations: budget and procurement
    rhythms, standing constraints, personal histories between stakeholders, what

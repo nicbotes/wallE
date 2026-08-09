@@ -80,8 +80,15 @@ export interface ClientView {
   }[];
   decisions: ClientDecision[];
   /** Resolved trade-offs, depersonalised. */
-  resolved_questions: { question: string; opened: string; resolved: string; resolved_by: string | null }[];
-  open_questions?: { question: string; opened: string }[];
+  resolved_questions: {
+    question: string;
+    opened: string;
+    resolved: string;
+    resolved_by: string | null;
+    /** What was argued, WITHOUT who argued it. */
+    considerations: string[];
+  }[];
+  open_questions?: { question: string; opened: string; considerations: string[] }[];
   /** Prose passages a human should read before this goes to a client. */
   review_required: { where: string; signal: string; text: string }[];
 }
@@ -173,7 +180,18 @@ const projects = brain.projects
     log: p.log.map((l) => ({ date: asDate(l.date), kind: l.kind, title: l.title })),
   }));
 
-// Tensions become depersonalised questions. `between` is never emitted.
+/**
+ * Tensions become depersonalised questions. `between` is never emitted, and
+ * position summaries are emitted WITHOUT their stakeholder — the trade-off on
+ * its merits, which is the useful half, minus the politics, which is not ours
+ * to share. Summaries are prose, so they go through the same review flagger.
+ */
+const considerationsOf = (t: { id: string; positions?: { summary: string }[] }): string[] => {
+  const summaries = (t.positions ?? []).map((p) => p.summary).filter(Boolean);
+  for (const s of summaries) reviewFlags.push(...flagProse(`question "${nameOf(t.id)}"`, s));
+  return summaries;
+};
+
 const resolved = brain.tensions
   .filter((t) => t.status === "resolved")
   .map((t) => ({
@@ -181,6 +199,7 @@ const resolved = brain.tensions
     opened: asDate(t.opened),
     resolved: asDate(t.resolved),
     resolved_by: t.resolved_by ? nameOf(t.resolved_by) : null,
+    considerations: considerationsOf(t),
   }));
 
 const view: ClientView = {
@@ -197,7 +216,11 @@ const view: ClientView = {
     ? {
         open_questions: brain.tensions
           .filter((t) => t.status === "open")
-          .map((t) => ({ question: nameOf(t.id), opened: asDate(t.opened) })),
+          .map((t) => ({
+            question: nameOf(t.id),
+            opened: asDate(t.opened),
+            considerations: considerationsOf(t),
+          })),
       }
     : {}),
   review_required: reviewFlags,
@@ -256,13 +279,17 @@ if (has("json")) {
         `- **${q.question}** — raised ${q.opened}, settled ${q.resolved}` +
           (q.resolved_by ? ` by "${q.resolved_by}"` : ""),
       );
+      for (const c of q.considerations) out.push(`  - considered: ${c}`);
     }
     out.push("");
   }
 
   if (view.open_questions?.length) {
     out.push("## Open questions", "");
-    for (const q of view.open_questions) out.push(`- **${q.question}** — open since ${q.opened}`);
+    for (const q of view.open_questions) {
+      out.push(`- **${q.question}** — open since ${q.opened}`);
+      for (const c of q.considerations) out.push(`  - considered: ${c}`);
+    }
     out.push("");
   }
 

@@ -17,6 +17,15 @@ describe("validateBrain on the clean fixture", () => {
     expect(result.warnings.some((w) => w.includes("req-fast-dashboards"))).toBe(true);
   });
 
+  it("warns — not errors — when a two-party tension has no positions", () => {
+    expect(result.warnings.some((w) => w.includes("ten-dashboard-ownership") && w.includes("no positions"))).toBe(true);
+    expect(result.errors.some((e) => e.includes("ten-dashboard-ownership"))).toBe(false);
+  });
+
+  it("accepts a tension that does record positions", () => {
+    expect(result.errors.filter((e) => e.includes("ten-speed-vs-spend"))).toEqual([]);
+  });
+
   it("accepts backfill — an event dated long before the drop that taught us", () => {
     // dec-20220614-security-review-gate: 2022 decision, learned via a 2024 drop.
     expect(result.errors.filter((e) => e.includes("security-review-gate"))).toEqual([]);
@@ -72,6 +81,13 @@ describe("validateBrain on the poisoned fixture", () => {
   it("catches a bad side and a duplicated speaker alias", () => {
     expectError('side "theirs"');
     expectError('alias "Cy" is claimed by both');
+  });
+
+  it("catches malformed and dangling tension positions", () => {
+    expectError('position[0]: stakeholder "sh-does-not-exist" is not a known stakeholder');
+    expectError("position[1]: missing summary");
+    expectError("position[2]: missing stakeholder");
+    expectError('position by "sh-alias-thief" who is not listed in between');
   });
 
   it("catches observation enum and reference violations", () => {
