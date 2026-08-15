@@ -395,6 +395,47 @@ delta vs the previous baseline, and a per-failure appendix — so skill-prompt
 changes show their score delta. See `eval/reports/README.md` for the baseline
 procedure (none committed yet; it's a one-command local run).
 
+## Several people writing at once
+
+All brains live in one repo — one directory per client — because within a team
+that can see every client, separate repos cost you cross-client tooling (the
+vocabulary promotion path in `spine.ts candidates` ranks topics *by how many
+clients use them*) and buy nothing back.
+
+What that does need solving is concurrency, and the failure is sharper than it
+looks. The commit gate refuses to run when anything is already staged:
+
+```bash
+if ! git diff --cached --quiet; then fail "index is not clean"; fi
+```
+
+That check is **repo-global**. Two people ingesting *different* clients in one
+checkout still collide — and on unlucky timing the second one's `git add`
+sweeps the first's staged files into its commit, putting a finding in the
+ledger under the wrong client. That's a correctness bug in the audit trail,
+which is the one thing the whole design exists to protect.
+
+A git worktree fixes it at the root: each has **its own index file** while
+sharing one object store and history, so the gate becomes session-local and
+needs no change.
+
+```bash
+npx tsx tools/session.ts open acme-utilities   # → isolated worktree + branch
+# …run the agent with that directory as its working directory…
+npx tsx tools/session.ts close <session-id>    # merges the findings into main
+npx tsx tools/session.ts list                  # what's open, and how many findings
+```
+
+Sessions **merge, never rebase** — a rebase rewrites every commit it moves, and
+[`schema/FINDINGS.md`](schema/FINDINGS.md) forbids rewriting brain history. The
+merge commit carries no `Finding:` trailer, and `query-log.ts` walks history
+without `--first-parent`, so every merged session's findings are still read
+back exactly as if they'd been made in sequence.
+
+`close` refuses rather than destroying anything: uncommitted work in a session
+stops the close, and `abort` won't discard committed findings without
+`--force`.
+
 ## Derived layers (optional, always rebuildable)
 
 Files + git are the only source of truth. Everything else is a disposable
@@ -420,7 +461,8 @@ schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) 
                      brain-audit · brain-onboard · brain-domain · brain-brief
 domains/             domain packs — the thin controlled vocabulary for topics
 tools/               validate · query-log · timeline · staleness · search · speakers
-                     stats · spine · client-view · org-chart · commit-finding.sh
+                     stats · spine · client-view · org-chart · session
+                     commit-finding.sh
 clients/             one brain per client (ships empty)
 eval/                corpus · goldens · harness · committed score reports
 ```
