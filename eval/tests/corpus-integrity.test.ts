@@ -10,6 +10,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
+import { DOMAIN_JARGON } from "../../tools/lib/redaction.js";
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const CORPUS = path.join(REPO, "eval", "corpus", "meridian-energy");
@@ -207,16 +208,19 @@ describe("leakage lint", () => {
     // how our own engagements are structured. `domains/` is where vocabulary
     // belongs, so it is deliberately not scanned; the word "insurance" itself
     // stays legal, since it names the shipped pack.
-    const JARGON = [
-      "capacity provider", "managing agent", "distribution brand",
-      "underwrit", "insurer", "policyholder", "reinsur",
-    ];
+    // Shared with tools/lib/redaction.ts, which checks the same vocabulary on
+    // its way OUT in an upstream issue. One list, so the two cannot disagree.
     const targets = [".claude", "schema", "tools"].map((d) => path.join(REPO, d));
     for (const target of targets) {
-      for (const word of JARGON) {
+      for (const word of DOMAIN_JARGON) {
         let out = "";
         try {
-          out = execFileSync("rg", ["-il", word, target], { encoding: "utf8" });
+          // The file that DEFINES the list necessarily contains every term.
+          out = execFileSync(
+            "rg",
+            ["-il", "--glob", "!**/redaction.ts", word, target],
+            { encoding: "utf8" },
+          );
         } catch {
           continue; // rg exit 1 = no matches = good
         }

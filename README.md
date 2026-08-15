@@ -121,7 +121,7 @@ where taking more would actually help.
 | Body of work | What we use | What we skipped | Would more help? |
 | --- | --- | --- | --- |
 | **IBIS** (Rittel & Kunz, 1970) | Issues *and* Positions: a tension is an Issue held open until something resolves it (`resolved_by`), and `positions` records what each party argued. | **Arguments** — the evidence layer beneath a position. | Not yet. Positions carry most of the value; adding Arguments is speculative until positions prove insufficient in practice. |
-| **SKOS** (W3C) | `label` / `alt:` on spine terms are `prefLabel` / `altLabel`. That pair does most of the work — it's how "cover", "coverage" and "benefit" collapse to one term. | `broader`/`narrower` (facets are deliberately flat), `related`, URIs, `exactMatch`. | Partly. Per-term `definition` is cheap and would disambiguate for the tagging agent. Shallow `broader` only once a facet outgrows ~15 terms. `exactMatch` to ACORD only if integrating with insurer systems. |
+| **SKOS** (W3C) | `label` / `alt:` on spine terms are `prefLabel` / `altLabel`. That pair does most of the work — it's how "cover", "coverage" and "benefit" collapse to one term. | `broader`/`narrower` (facets are deliberately flat), `related`, URIs, `exactMatch`. | Partly. Per-term `definition` is cheap and would disambiguate for the tagging agent. Shallow `broader` only once a facet outgrows ~15 terms. `exactMatch` to an external industry standard only if integrating with systems that speak it. |
 | **ADR** (Nygard, 2011) | `decisions.md` with supersession chains already *is* an architecture-decision log. | Nothing meaningful. | No — we have the useful part. Naming it just makes the convention recognisable. |
 | **PROV-O** (W3C) | The model: `source`/`sources` and attribution map onto `wasDerivedFrom` / `wasAttributedTo`. | The actual RDF vocabulary and URIs. | Only if federating or exporting provenance to another system. |
 | **Bitemporal modelling** (Snodgrass; Datomic) | "Two clocks" is valid time vs transaction time. | Formal temporal query operators. | No — the two date fields carry it. Reassuring that it's a known-good pattern rather than an invention. |
@@ -454,6 +454,7 @@ projection you can rebuild from `drops/`:
 
 ```
 CLAUDE.md            operating instructions for the agent
+CONTRIBUTING.md      filing issues upstream without leaking client or domain material
 docs/PLAN.md         the full build plan & design rationale
 docs/TODO.md         backlog — led by validating all of this against real transcripts
 schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) · templates/
@@ -461,7 +462,7 @@ schema/              SCHEMA.md (entities, IDs) · FINDINGS.md (commit protocol) 
                      brain-audit · brain-onboard · brain-domain · brain-brief
 domains/             domain packs — the thin controlled vocabulary for topics
 tools/               validate · query-log · timeline · staleness · search · speakers
-                     stats · spine · client-view · org-chart · session
+                     stats · spine · client-view · org-chart · session · issue-check
                      commit-finding.sh
 clients/             one brain per client (ships empty)
 eval/                corpus · goldens · harness · committed score reports

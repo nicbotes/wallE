@@ -14,7 +14,7 @@ capabilities.
 - `domains/` — domain packs: the thin controlled vocabulary ("spine") topics
   are tagged against. Capability, never client content. See `domains/README.md`.
 - `tools/` — deterministic helpers (validate, query-log, timeline, staleness,
-  search, speakers, stats, spine, client-view, org-chart, session,
+  search, speakers, stats, spine, client-view, org-chart, session, issue-check,
   commit-finding.sh). Run TypeScript tools with
   `npx tsx tools/<name>.ts`.
 - `eval/` — synthetic corpus + goldens + harness that grade the extraction
@@ -52,7 +52,11 @@ capabilities.
     findings in one checkout corrupt each other, even on different clients.
     Concurrent work goes through `npx tsx tools/session.ts open <slug>`, which
     hands back an isolated git worktree. Sessions **merge**, never rebase.
-11. After changing a brain, run `npx tsx tools/validate.ts <client-slug>`.
+11. **Nothing about a real client goes upstream.** This repo is the public
+    shell; the brains are not. Before filing an issue or PR against it, read
+    `CONTRIBUTING.md` and run `npx tsx tools/issue-check.ts <draft>` — rebuild
+    the report on the shipped fixtures rather than redacting a real one.
+12. After changing a brain, run `npx tsx tools/validate.ts <client-slug>`.
 
 ## Which skill when
 
